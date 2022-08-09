@@ -76,12 +76,24 @@ const dancePuppet = async (date, court, time) => {
 
   // SELECT DATE *************************************************************
   await page
-    .waitForSelector('input[id="Reservation_Date"]')
+    .waitForSelector('img[class="ui-datepicker-trigger"]')
     //.catch((e) => errorRetry(e));
-  await page.focus('input[id="Reservation_Date"]')//.catch((e) => errorRetry(e));
+  // await page.focus('input[id="Reservation_Date"]')//.catch((e) => errorRetry(e));
   await page
     .click('img[class="ui-datepicker-trigger"]')
    // .catch((e) => errorRetry(e));
+
+
+  await page.waitForSelector('span[class="ui-datepicker-month"]')
+  let currentMonth = await page.$eval('span[class="ui-datepicker-month"]', (el) => el.innerText.toLowerCase());
+  if (currentMonth !== date.month) {
+    console.log("ADVANCING MONTH");
+      await page.click('span[class="ui-icon ui-icon-circle-triangle-e"]')//.catch((e) => errorRetry(e));
+  }
+
+  await page.waitForTimeout(200).then(() => console.log("WAITED FOR .2 SECOND"));
+
+
   await page
     .waitForSelector('a[class="ui-state-default"]')
    // .catch((e) => errorRetry(e));
@@ -89,10 +101,9 @@ const dancePuppet = async (date, court, time) => {
     .$$('a[class="ui-state-default"]', (date) => date)
   //  .catch((e) => errorRetry(e));
 
-  // const dayInt = Number(date.day)
-  // let today = new Date();
-  // let day = dayInt > today.getDate() ? dayInt - 2 : dayInt - 1;
-  dates[Number(date.day) - 2].click()
+  const day = Number(date.day);
+  const dayModifier = currentMonth === date.month ? 2 : 1;
+  dates[day - dayModifier].click()
 
 
   // CONFIRM DATE *************************************************************
@@ -121,12 +132,12 @@ const dancePuppet = async (date, court, time) => {
     .waitForSelector('select[id="Duration"]')
    // .catch((e) => errorRetry(e));
   await page
-    .type('input[id="Extended_Desc"]', "I solemnly swear I am up to no good")
+    .type('input[id="Extended_Desc"]', "I solemnly swear I am up to no good");
    // .catch((e) => errorRetry(e));
   // await page.$eval('input[id="SaveReservation"]', (e) => e.click());
-  await browser.close();
+  //await browser.close();
 };
-const day = 11;
+
 
 if (cluster.isMaster) {
   const totalCPUs = require("os").cpus().length;
@@ -142,6 +153,13 @@ if (cluster.isMaster) {
   //   + parseInt(process.env.dateOffset),
   dancePuppet(date, "2", "14");
 }
+
+
+
+
+
+
+
 const getMethods = (obj) => {
   let properties = new Set();
   let currentObj = obj;
