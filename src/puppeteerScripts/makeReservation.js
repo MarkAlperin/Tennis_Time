@@ -9,7 +9,7 @@ const helpers = require("../helpers/helpers");
 let puppetAttempts = 0;
 
 const makeReservation = async (resData) => {
-  const startTime = performance.now();
+  console.log("Inside of makeReservation...");
   puppetAttempts++;
 
   // LAUNCH PAGE ***************************************************************
@@ -25,6 +25,7 @@ const makeReservation = async (resData) => {
     console.log("ERROR: Executing errorRety()...");
     if (2 > puppetAttempts) {
       await browser.close();
+      resData.error = true;
       await makeReservation(resData);
     } else {
       console.error(err.message);
@@ -33,7 +34,7 @@ const makeReservation = async (resData) => {
   };
 
   // SET LOCATION *************************************************************
-  await page.select("select#facility_num", "25").catch((e) => errorRetry(e));
+  await page.select("select#facility_num", resData.facility).catch((e) => errorRetry(e));
   await page.click("input#btnSubmit").catch((e) => errorRetry(e));
 
   // SIGNING IN  ****************************************************************
@@ -77,49 +78,50 @@ const makeReservation = async (resData) => {
     .catch((e) => errorRetry(e));
   const day = Number(resData.day);
   const dayModifier = currentMonth === resData.month ? 2 : 1;
-  dates[day - dayModifier].click().catch((e) => errorRetry(e));
-  await page
-    .waitForSelector('td[class="open pointer"]')
-    .catch((e) => errorRetry(e));
 
-  const court = helpers.formatCourtIndex(resData.court);
-  const time = helpers.formatTimeIndex(resData.time);
-  await page
-    .evaluate(
-      ({ court, time }) => {
-        this.Reserve(court, time);
-      },
-      { court, time }
-    )
-    .catch((e) => errorRetry(e));
+  // SCHEDULE CRON JOB ********************************************************
+  console.log("Scheduling cron job...", resData.cronString);
+  if (resData.error) {
+    const date = new Date();
+    resData.cronString = `${date.getSeconds()} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
+  }
+  cron.schedule(resData.cronString, async () => {
+    const startTime = performance.now();
+    dates[day - dayModifier].click().catch((e) => errorRetry(e));
+    await page
+      .waitForSelector('td[class="open pointer"]')
+      .catch((e) => errorRetry(e));
 
-  await page
-    .waitForSelector('select[id="Duration"]')
-    .catch((e) => errorRetry(e));
-  await page
-    .select('select[id="Duration"]', resData.duration)
-    .catch((e) => errorRetry(e));
-  await page
-    .type('input[id="Extended_Desc"]', "Tennis Time!")
-    .catch((e) => errorRetry(e));
-  await page
-    .$eval('input[id="SaveReservation"]', (e) => e.click())
-    .catch((e) => errorRetry(e));
-  //await browser.close();
+    const court = helpers.formatCourtIndex(resData.court);
+    const time = helpers.formatTimeIndex(resData.time);
+    await page
+      .evaluate(
+        ({ court, time }) => {
+          this.Reserve(court, time);
+        },
+        { court, time }
+      )
+      .catch((e) => errorRetry(e));
 
-  console.log("Execution time: " + Math.round(performance.now() - startTime) + "ms");
+    await page
+      .waitForSelector('select[id="Duration"]')
+      .catch((e) => errorRetry(e));
+    await page
+      .select('select[id="Duration"]', resData.duration)
+      .catch((e) => errorRetry(e));
+    await page
+      .type('input[id="Extended_Desc"]', "Tennis Time!")
+      .catch((e) => errorRetry(e));
+    await page
+      .$eval('input[id="SaveReservation"]', (e) => e.click())
+      .catch((e) => errorRetry(e));
+    //await browser.close();
+    console.log("Execution time: " + Math.round(performance.now() - startTime) + "ms");
+  });
 };
 
-const reservationData = {
-  month: "august",
-  day: "24",
-  year: "2022",
-  time: "0830",
-  court: "NL4",
-  duration: "2",
-};
-makeReservation(reservationData);
 
+module.exports =  makeReservation ;
 // const cluster = require("cluster");
 // if (cluster.isMaster) {
 //   //const totalCPUs = require("os").cpus().length;
