@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,26 +15,52 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Chip from "@mui/material/Chip";
 
 import MaterialUIPickers from "./components/MaterialUIPickers";
-
-
+import helpers from "./helpers/helpers";
 
 const theme = createTheme();
 
 export default function SignUp() {
   const [facility, setFacility] = useState("Tennis");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [clickCounter, setClickCounter] = useState(0);
 
   const chipClickHandler = () => {
     setFacility((prevState) => {
       return prevState === "Tennis" ? "Pickleball" : "Tennis";
     });
   };
+
+  const handleDateChange = (newValue) => {
+    setDate(newValue);
+  };
+
+  const handleTimeChange = (newValue) => {
+    setTime(newValue);
+  };
+
+  const handleCheckboxChange = () => {
+    setClickCounter(prevState => prevState + 1);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    if (date && time) {
+      const resData = {
+        time: helpers.formatTimeIndex(time),
+        month: helpers.months[date.getMonth()].name,
+        day: date.getDate(),
+        facility: facility === "Tennis" ? "25" : "26",
+        courts: facility === "Tennis" ? ["1", "2", "3", "4"] : ["1", "2"],
+      }
+      console.log(resData);
+      if (clickCounter >= 5) {
+        console.log("You have clicked enough times!");
+      }
+    } else {
+      alert("Please select a date and time");
+    }
+
   };
 
   return (
@@ -61,21 +88,37 @@ export default function SignUp() {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Chip onClick={chipClickHandler} color={facility === "Pickleball" ? "default" : "success"} label="Tennis" />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Chip onClick={chipClickHandler} color={facility === "Pickleball" ? "success" : "default"}  label="Pickleball" />
+              <Grid item xs={12} sm={12}>
+                <SelectContainer>
+                  <Chip
+                    onClick={chipClickHandler}
+                    color={facility === "Pickleball" ? "default" : "success"}
+                    label="Tennis"
+                  />
+                  <Chip
+                    onClick={chipClickHandler}
+                    color={facility === "Pickleball" ? "success" : "default"}
+                    label="Pickleball"
+                  />
+                </SelectContainer>
               </Grid>
               <Grid item xs={12}>
-                <MaterialUIPickers />
+                <MaterialUIPickers
+                  handleDateChange={handleDateChange}
+                  handleTimeChange={handleTimeChange}
+                  time={time}
+                  date={date}
+                />
               </Grid>
-              <Grid item xs={12}>
-              </Grid>
+              <Grid item xs={12}></Grid>
               <Grid item xs={12}>
                 <FormControlLabel
                   control={
-                    <Checkbox value="upToNoGood" color="primary" />
+                    <Checkbox
+                      value="upToNoGood"
+                      color="primary"
+                      onChange={handleCheckboxChange}
+                    />
                   }
                   label="I solemly swear that I am up to no good 🧙🏻‍♂️"
                 />
@@ -103,3 +146,10 @@ export default function SignUp() {
     </ThemeProvider>
   );
 }
+
+const SelectContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 20px;
+`;

@@ -76,7 +76,7 @@ const makeReservation = async (resData) => {
   let dates = await page
     .$$('a[class="ui-state-default"]', (date) => date)
     .catch((e) => errorRetry(e));
-  const day = Number(resData.day);
+  const day = resData.day;
   const dayModifier = currentMonth === resData.month ? 2 : 1;
 
   // SCHEDULE CRON JOB ********************************************************

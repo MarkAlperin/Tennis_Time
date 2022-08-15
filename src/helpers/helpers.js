@@ -1,4 +1,5 @@
 
+
 const formatCourtIndex = (courtStr) => {
   const courts = [
     "NL1",
@@ -20,40 +21,41 @@ const formatCourtIndex = (courtStr) => {
   }
 };
 
-  const formatTimeIndex = (timeStr) => {
+  const formatTimeIndex = (time) => {
     const times = [
-      "0630",
-      "0700",
-      "0730",
-      "0800",
-      "0830",
-      "0900",
-      "0930",
-      "1000",
+      "630",
+      "70",
+      "730",
+      "80",
+      "830",
+      "90",
+      "930",
+      "100",
       "1030",
-      "1100",
+      "110",
       "1130",
-      "1200",
+      "120",
       "1230",
-      "1300",
+      "130",
       "1330",
-      "1400",
+      "140",
       "1430",
-      "1500",
+      "150",
       "1530",
-      "1600",
+      "160",
       "1630",
-      "1700",
+      "170",
       "1730",
-      "1800",
+      "180",
       "1830",
-      "1900",
+      "190",
       "1930",
-      "2000",
+      "200",
       "2030",
-      "2100",
+      "210",
       "2130",
     ];
+    const timeStr = `${time.getHours()}${time.getMinutes()}`;
     if (times.includes(timeStr)) {
       const tableIndex = times.indexOf(timeStr) + 14;
       return tableIndex.toString();
@@ -102,7 +104,7 @@ const formatCourtIndex = (courtStr) => {
     memo[month] = monthData;
     memo[indx] = monthData;
     return memo;
-  }, {})
+  }, {});
 
   module.exports = {
     formatTimeIndex,
