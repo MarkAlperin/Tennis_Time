@@ -114,7 +114,7 @@ const formatCourtIndex = (courtStr) => {
       time: formatTimeIndex(time),
       month: months[date.getMonth()].name,
       day: date.getDate(),
-      facility: facility === "Tennis" ? "25" : "26",
+      facility: facility === "Tennis" ? "25" : "88",
       courts: facility === "Tennis" ? ["1", "2", "3", "4"] : ["1", "2"],
     };
     return resData;
