@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 
@@ -37,6 +38,7 @@ export default function MaterialUIPickers(props) {
         />}
         <TimePicker
           label="Time"
+          orientation="landscape"
           minutesStep={30}
           value={props.time}
           onChange={props.handleTimeChange}

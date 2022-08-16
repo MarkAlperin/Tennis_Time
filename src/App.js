@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -8,14 +9,15 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import SportsTennisIcon from "@mui/icons-material/SportsTennis";
+import FaceIcon from "@mui/icons-material/Face";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Chip from "@mui/material/Chip";
 
 import MaterialUIPickers from "./components/MaterialUIPickers";
-import helpers from "./helpers/helpers";
+import {formatResData} from "./helpers/helpers";
 
 const theme = createTheme();
 
@@ -40,27 +42,58 @@ export default function SignUp() {
   };
 
   const handleCheckboxChange = () => {
-    setClickCounter(prevState => prevState + 1);
+    setClickCounter((prevState) => prevState + 1);
+  };
+
+  const hhandleSubmit = (e) => {
+    axios({
+      method: "get",
+      url: "http://localhost:3001/reservations"
+    })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log(date)
     if (date && time) {
-      const resData = {
-        time: helpers.formatTimeIndex(time),
-        month: helpers.months[date.getMonth()].name,
-        day: date.getDate(),
-        facility: facility === "Tennis" ? "25" : "26",
-        courts: facility === "Tennis" ? ["1", "2", "3", "4"] : ["1", "2"],
-      }
+      // date.setHours(time.getHours(), time.getMinutes());
+      // const resData = {
+      //   date: date,
+      //   time: helpers.formatTimeIndex(time),
+      //   month: helpers.months[date.getMonth()].name,
+      //   day: date.getDate(),
+      //   facility: facility === "Tennis" ? "25" : "26",
+      //   courts: facility === "Tennis" ? ["1", "2", "3", "4"] : ["1", "2"],
+      // };
+      const resData = formatResData(date, time, facility);
       console.log(resData);
       if (clickCounter >= 5) {
-        console.log("You have clicked enough times!");
+        axios({
+          method: "post",
+          url: "http://localhost:3001/reservations",
+          data: resData
+        })
+        .then(res => {
+          console.log(res);
+        }).catch(err => {
+          console.log(err);
+        });
+      } else {
+        // alert(
+        //   `Future ${facility} reservation scheduled for ${resData.month} ${
+        //     resData.day
+        //   } at ${time.getHours()}:${time.getMinutes() > 0 ? "30" : "00"}`
+        // );
       }
     } else {
       alert("Please select a date and time");
     }
-
   };
 
   return (
@@ -76,7 +109,7 @@ export default function SignUp() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+            <FaceIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Tennis Time
@@ -91,11 +124,13 @@ export default function SignUp() {
               <Grid item xs={12} sm={12}>
                 <SelectContainer>
                   <Chip
+                    icon={facility === "Tennis" ? <SportsTennisIcon /> : null}
                     onClick={chipClickHandler}
                     color={facility === "Pickleball" ? "default" : "success"}
                     label="Tennis"
                   />
                   <Chip
+                  icon={facility === "Pickleball" ? <SportsTennisIcon /> : null}
                     onClick={chipClickHandler}
                     color={facility === "Pickleball" ? "success" : "default"}
                     label="Pickleball"
@@ -126,7 +161,7 @@ export default function SignUp() {
             </Grid>
             <Button
               type="submit"
-              onClick={handleSubmit}
+              onClick={hhandleSubmit}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
@@ -135,8 +170,12 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  Would you like to see already scheduled reservations?
+                <Link
+                  href="https://sites.onlinecourtreservations.com/reservations"
+                  target="_blank"
+                  variant="body2"
+                >
+                  Cinco Ranch reservations website
                 </Link>
               </Grid>
             </Grid>

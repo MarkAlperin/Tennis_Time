@@ -106,7 +106,23 @@ const formatCourtIndex = (courtStr) => {
     return memo;
   }, {});
 
+  const formatResData = (date, time, facility) => {
+    console.log(date)
+    date.setHours(time.getHours(), time.getMinutes());
+    const resData = {
+      date: date,
+      time: formatTimeIndex(time),
+      month: months[date.getMonth()].name,
+      day: date.getDate(),
+      facility: facility === "Tennis" ? "25" : "26",
+      courts: facility === "Tennis" ? ["1", "2", "3", "4"] : ["1", "2"],
+    };
+    return resData;
+
+  };
+
   module.exports = {
+    formatResData,
     formatTimeIndex,
     formatCourtIndex,
     getMethods,
