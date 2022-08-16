@@ -117,8 +117,8 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <MaterialUIPickers
-                  handleDateChange={setDate}
-                  handleTimeChange={setTime}
+                  handleDateChange={handleDateChange}
+                  handleTimeChange={handleTimeChange}
                   time={time}
                   date={date}
                 />
