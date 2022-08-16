@@ -45,32 +45,9 @@ export default function SignUp() {
     setClickCounter((prevState) => prevState + 1);
   };
 
-  const hhandleSubmit = (e) => {
-    axios({
-      method: "get",
-      url: "http://localhost:3001/reservations"
-    })
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    });
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(date)
     if (date && time) {
-      // date.setHours(time.getHours(), time.getMinutes());
-      // const resData = {
-      //   date: date,
-      //   time: helpers.formatTimeIndex(time),
-      //   month: helpers.months[date.getMonth()].name,
-      //   day: date.getDate(),
-      //   facility: facility === "Tennis" ? "25" : "26",
-      //   courts: facility === "Tennis" ? ["1", "2", "3", "4"] : ["1", "2"],
-      // };
       const resData = formatResData(date, time, facility);
       console.log(resData);
       if (clickCounter >= 5) {
@@ -82,7 +59,8 @@ export default function SignUp() {
         .then(res => {
           console.log(res);
         }).catch(err => {
-          console.log(err);
+          console.error(err);
+          alert(err.message)
         });
       } else {
         // alert(
@@ -139,8 +117,8 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <MaterialUIPickers
-                  handleDateChange={handleDateChange}
-                  handleTimeChange={handleTimeChange}
+                  handleDateChange={setDate}
+                  handleTimeChange={setTime}
                   time={time}
                   date={date}
                 />
@@ -161,7 +139,7 @@ export default function SignUp() {
             </Grid>
             <Button
               type="submit"
-              onClick={hhandleSubmit}
+              onClick={handleSubmit}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
