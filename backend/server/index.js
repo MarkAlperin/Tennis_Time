@@ -48,8 +48,10 @@ app.put("/reservations/:id", (req, res) => {
 });
 
 app.delete("/reservations/:id", (req, res) => {
-  console.log("delete", req.params.id);
-  Reservations.findOneAndDelete({ id: req.params.id })
+  // const ObjectID = require(‘mongodb’).ObjectID;
+  // var postId = new ObjectID(req.body.postId);
+
+  Reservations.findByIdAndDelete(req.params.id)
     .then(() => {
       res.sendStatus(200);
     })
