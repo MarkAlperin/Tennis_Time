@@ -18,7 +18,8 @@ let reservationsSchema = new mongoose.Schema({
   day: Number,
   facility: String,
   courts: [String],
-  court: String,
+  game: String,
+  humanTime: [String],
 });
 
 module.exports = mongoose.model("Reservations", reservationsSchema);
