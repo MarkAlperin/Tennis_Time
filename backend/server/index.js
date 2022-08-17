@@ -27,7 +27,7 @@ app.post("/reservations", async (req, res) => {
 });
 
 app.get("/reservations", (req, res) => {
-  Reservations.find({})
+  Reservations.find({}).sort({ date: 1 })
     .then((data) => {
       res.send(data);
     })
@@ -37,8 +37,8 @@ app.get("/reservations", (req, res) => {
     });
 });
 
-app.put("/reservations/:date", (req, res) => {
-  Reservations.findOneAndUpdate({ date: req.params.date }, { $set: req.body })
+app.put("/reservations/:id", (req, res) => {
+  Reservations.findOneAndUpdate({ _id: req.params._id }, { $set: req.body })
     .then(() => {
       res.sendStatus(200);
     })
@@ -47,8 +47,9 @@ app.put("/reservations/:date", (req, res) => {
     });
 });
 
-app.delete("/reservations/:date", (req, res) => {
-  Reservations.findOneAndDelete({ date: req.params.date })
+app.delete("/reservations/:id", (req, res) => {
+  console.log("delete", req.params.id);
+  Reservations.findOneAndDelete({ id: req.params.id })
     .then(() => {
       res.sendStatus(200);
     })

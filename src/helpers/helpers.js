@@ -106,8 +106,7 @@ const formatCourtIndex = (courtStr) => {
     return memo;
   }, {});
 
-  const formatResData = (date, time, facility) => {
-    console.log(date)
+  const formatResData = (date, time, facility, isRandi) => {
     date.setHours(time.getHours(), time.getMinutes());
     const resData = {
       date: date,
@@ -116,7 +115,12 @@ const formatCourtIndex = (courtStr) => {
       day: date.getDate(),
       facility: facility === "Tennis" ? "25" : "88",
       courts: facility === "Tennis" ? ["1", "2", "3", "4"] : ["1", "2"],
+      game: facility,
+      humanTime: date.toLocaleString("en-US").split(", "),
+      isRandi: isRandi
     };
+    let t = resData.humanTime[1]
+    resData.humanTime[1] = `${t.slice(0, t.length-6)} ${t.slice(t.length-2, t.length)}`
     return resData;
 
   };
