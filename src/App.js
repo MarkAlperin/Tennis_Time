@@ -7,7 +7,7 @@ export default function App() {
   return (
     <>
       {" "}
-      <ReservationForm />
+      {/* <ReservationForm /> */}
       <ReservationsDisplay />
     </>
   );

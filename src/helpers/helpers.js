@@ -116,6 +116,8 @@ const formatCourtIndex = (courtStr) => {
       day: date.getDate(),
       facility: facility === "Tennis" ? "25" : "88",
       courts: facility === "Tennis" ? ["1", "2", "3", "4"] : ["1", "2"],
+      game: facility,
+      humanTime: date.toLocaleString("en-US").split(", ")
     };
     return resData;
 
