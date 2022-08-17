@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import axios from "axios";
+
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
@@ -8,9 +8,7 @@ import SportsTennisIcon from "@mui/icons-material/SportsTennis";
 
 
 export default function Upcoming({ reservation, date, cancelReservation }) {
-  const [timeLeft, setTimeLeft] = useState(
-    Math.abs(date - new Date(reservation.date))
-  );
+  const [timeLeft, setTimeLeft] = useState(Math.abs(date - new Date(reservation.date).setHours(9, 0)));
   const [daysLeft, setDaysLeft] = useState();
   const [hoursLeft, setHoursLeft] = useState();
   const [minutesLeft, setMinutesLeft] = useState();
@@ -28,11 +26,11 @@ export default function Upcoming({ reservation, date, cancelReservation }) {
   }, [timeLeft]);
 
   const formatTime = (integer) => (integer < 10 ? `0${integer}` : integer);
+
   const avatarSX =
     reservation.game === "Tennis"
       ? { m: 1, bgcolor: "secondary.main" }
       : { m: 1, bgcolor: "success.main" };
-
 
 
   return (
