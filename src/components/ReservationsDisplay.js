@@ -7,7 +7,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Countdown from "./Countdown";
+import ReservationCard from "./ReservationCard";
 
 const theme = createTheme();
 
@@ -26,15 +26,15 @@ export default function ReservationsDisplay(props) {
     setReservations(reservationData.data);
   };
 
-  const cancelReservation = (id) => {
-
-    axios.delete(`http://localhost:3001/reservations/${id}`)
+  const cancelReservation = async (id) => {
+    await axios.delete(`http://localhost:3001/reservations/${id}`)
       .then((res) => {
         console.log(res);
       })
       .catch((err) => {
         console.log("ERROR: ", err);
       });
+    getReservations();
   };
 
   return (
@@ -54,7 +54,7 @@ export default function ReservationsDisplay(props) {
           </Typography>
           {Array.isArray(reservations) &&
             reservations.map((reservation, idx) => (
-              <Countdown
+              <ReservationCard
                 reservation={reservation}
                 date={date}
                 key={idx}

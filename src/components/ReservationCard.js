@@ -31,7 +31,7 @@ export default function Upcoming({ reservation, date, cancelReservation }) {
   const avatarSX =
     reservation.game === "Tennis"
       ? { m: 1, bgcolor: "secondary.main" }
-      : { m: 1, bgcolor: "secondary.success" };
+      : { m: 1, bgcolor: "success.main" };
 
 
 
@@ -81,12 +81,6 @@ const ReservationContainer = styled.div`
   padding-left: 10px;
   padding-right: 10px;
   margin-top: 10px;
-`;
-
-const StyledP = styled.div`
-  font-size: 1.5rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
 `;
 
 const DateTimeContainer = styled.div`

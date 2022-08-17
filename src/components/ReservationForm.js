@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,19 +14,22 @@ import SportsTennisIcon from "@mui/icons-material/SportsTennis";
 import FaceIcon from "@mui/icons-material/Face";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Chip from "@mui/material/Chip";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import MaterialUIPickers from "./MaterialUIPickers";
-import {formatResData} from "../helpers/helpers";
+import { formatResData } from "../helpers/helpers";
 
 const theme = createTheme();
+const localRandiAuth = localStorage.getItem("localRandiAuth");
 
+console.log("localRandiAuth: ",localRandiAuth);
 export default function ReservationForm() {
   const [facility, setFacility] = useState("Tennis");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [clickCounter, setClickCounter] = useState(0);
+  const [isRandi, setIsRandi] = useState(localRandiAuth);
 
   const chipClickHandler = () => {
     setFacility((prevState) => {
@@ -41,38 +45,41 @@ export default function ReservationForm() {
     setTime(newValue);
   };
 
-  const handleCheckboxChange = () => {
+  const handleCheckboxChange = (e) => {
     setClickCounter((prevState) => prevState + 1);
+  };
+
+  const handleAvatarClick = () => {
+    if (clickCounter === 7) {
+      setIsRandi(true);
+      localStorage.setItem("localRandiAuth", true);
+    }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (date && time) {
-      const resData = formatResData(date, time, facility);
-      console.log(resData);
-      if (clickCounter >= 5) {
-        axios({
-          method: "post",
-          url: "http://localhost:3001/reservations",
-          data: resData
-        })
-        .then(res => {
+      const resData = formatResData(date, time, facility, isRandi);
+      axios({
+        method: "post",
+        url: "http://localhost:3001/reservations",
+        data: resData,
+      })
+        .then((res) => {
           console.log(res);
-        }).catch(err => {
+        })
+        .catch((err) => {
           console.error(err);
-          alert(err.message)
+          alert(err.message);
         });
-      } else {
-        // alert(
-        //   `Future ${facility} reservation scheduled for ${resData.month} ${
-        //     resData.day
-        //   } at ${time.getHours()}:${time.getMinutes() > 0 ? "30" : "00"}`
-        // );
-      }
     } else {
       alert("Please select a date and time");
     }
   };
+
+  const avatarSX = isRandi
+    ? { m: 1, bgcolor: "success.main" }
+    : { m: 1, bgcolor: "secondary.main" };
 
   return (
     <ThemeProvider theme={theme}>
@@ -86,7 +93,7 @@ export default function ReservationForm() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar onClick={handleAvatarClick} sx={avatarSX}>
             <FaceIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -108,7 +115,9 @@ export default function ReservationForm() {
                     label="Tennis"
                   />
                   <Chip
-                  icon={facility === "Pickleball" ? <SportsTennisIcon /> : null}
+                    icon={
+                      facility === "Pickleball" ? <SportsTennisIcon /> : null
+                    }
                     onClick={chipClickHandler}
                     color={facility === "Pickleball" ? "success" : "default"}
                     label="Pickleball"
@@ -154,6 +163,15 @@ export default function ReservationForm() {
                   variant="body2"
                 >
                   Cinco Ranch reservations website
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link
+                  href="https://sites.onlinecourtreservations.com/reservations"
+                  target="_blank"
+                  variant="body2"
+                >
+                  See your future scheduleings
                 </Link>
               </Grid>
             </Grid>

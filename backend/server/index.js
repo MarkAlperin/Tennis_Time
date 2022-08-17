@@ -27,7 +27,7 @@ app.post("/reservations", async (req, res) => {
 });
 
 app.get("/reservations", (req, res) => {
-  Reservations.find({})
+  Reservations.find({}).sort({ date: 1 })
     .then((data) => {
       res.send(data);
     })
