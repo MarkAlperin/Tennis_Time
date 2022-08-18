@@ -30,8 +30,6 @@ export default function Upcoming({ reservation, date, cancelReservation }) {
 
   const avatarClickHandler=()=>{
     console.log(reservation)
-    console.log(date)
-    console.log(daysLeft)
   }
 
   const avatarSX =

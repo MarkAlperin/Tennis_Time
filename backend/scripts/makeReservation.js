@@ -14,7 +14,7 @@ const makeReservation = async (resData, courtNum) => {
 
   // LAUNCH PAGE ***************************************************************
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
@@ -117,8 +117,8 @@ const makeReservation = async (resData, courtNum) => {
     await page
       .$eval('input[id="SaveReservation"]', (e) => e.click())
       .catch((e) => errorRetry(e));
-    //await browser.close();
-    console.log("Closing makeReservation, Execution time: ", Math.round(performance.now() - startTime), " ms");
+    await browser.close();
+    console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
   });
 };
 

@@ -65,8 +65,8 @@ console.log(`Listening at http://localhost:${process.env.PORT}`);
 
 // const date = new Date();
 // let cronStartString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
-const cronStartString = "20 59 8 * * *";
+const cronStartString = "30 59 8 * * *";
 cron.schedule(cronStartString, () => {
-  console.log("cron trigger line 67 server/server/index.js");
+  console.log("cron trigger line 67 backend/server/index.js");
   findAndMakeReservations();
 })
