@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
 import axios from "axios";
+
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 import ReservationCard from "./ReservationCard";
 
 const theme = createTheme();
@@ -20,9 +20,7 @@ export default function ReservationsDisplay(props) {
   }, []);
 
   const getReservations = async () => {
-    const reservationData = await axios.get(
-      `http://localhost:3001/reservations`
-    );
+    const reservationData = await axios.get(`http://localhost:3001/reservations`);
     setReservations(reservationData.data);
   };
 
@@ -52,12 +50,13 @@ export default function ReservationsDisplay(props) {
           <Typography component="h1" variant="h5">
             Reservations to be scheduled
           </Typography>
+          {!reservations.length && <Typography variant="body1">No reservations</Typography>}
           {Array.isArray(reservations) &&
-            reservations.map((reservation, idx) => (
+            reservations.map((reservation) => (
               <ReservationCard
                 reservation={reservation}
                 date={date}
-                key={idx}
+                key={reservation._id}
                 cancelReservation={cancelReservation}
               />
             ))}
@@ -66,17 +65,3 @@ export default function ReservationsDisplay(props) {
     </ThemeProvider>
   );
 }
-
-// const ReservationsPage = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   height: 90vh;
-//   width: 90vw;
-
-//   `;
-// const ReservationsContainer = styled.div``;
-// const ReservationsHeader = styled.div``;
-// const ReservationsHeaderTitle = styled.h1``;
-// const ReservationsBody = styled.div``;

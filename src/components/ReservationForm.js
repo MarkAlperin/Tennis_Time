@@ -23,7 +23,6 @@ import { formatResData } from "../helpers/helpers";
 const theme = createTheme();
 const localRandiAuth = localStorage.getItem("localRandiAuth");
 
-console.log("localRandiAuth: ",localRandiAuth);
 export default function ReservationForm() {
   const [facility, setFacility] = useState("Tennis");
   const [date, setDate] = useState("");

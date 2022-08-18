@@ -48,8 +48,10 @@ app.put("/reservations/:id", (req, res) => {
 });
 
 app.delete("/reservations/:id", (req, res) => {
-  console.log("delete", req.params.id);
-  Reservations.findOneAndDelete({ id: req.params.id })
+  // const ObjectID = require(‘mongodb’).ObjectID;
+  // var postId = new ObjectID(req.body.postId);
+
+  Reservations.findByIdAndDelete(req.params.id)
     .then(() => {
       res.sendStatus(200);
     })
@@ -63,8 +65,8 @@ console.log(`Listening at http://localhost:${process.env.PORT}`);
 
 // const date = new Date();
 // let cronStartString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
-const cronStartString = "20 59 8 * * *";
+const cronStartString = "30 59 8 * * *";
 cron.schedule(cronStartString, () => {
-  console.log("cron trigger line 67 server/server/index.js");
+  console.log("cron trigger line 67 backend/server/index.js");
   findAndMakeReservations();
 })
