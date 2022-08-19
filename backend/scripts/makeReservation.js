@@ -14,6 +14,7 @@ const makeReservation = async (resData, courtNum) => {
 
   // LAUNCH PAGE ***************************************************************
   const browser = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium-browser',
     headless: true,
     ignoreHTTPSErrors: true,
   });
