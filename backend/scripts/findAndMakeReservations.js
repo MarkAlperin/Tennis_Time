@@ -14,8 +14,8 @@ const findAndMakeReservations = async () => {
     const reservationWindowDays = 14.509;
 
     if (resData.isRandi && diffDays <= reservationWindowDays) {
-      // resData.cronString = helpers.makeCronString(date);
-      resData.cronString = "0 0 9 * * *";
+      resData.cronString = helpers.makeCronString(date);
+      // resData.cronString = "0 0 8 * * *";
       resData.error = false;
       for (let courtNum = 0; courtNum < resData.courts.length; courtNum++) {
         makeReservation(resData, courtNum);

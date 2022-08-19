@@ -61,7 +61,7 @@ export default function ReservationForm() {
       const resData = formatResData(date, time, facility, isRandi);
       axios({
         method: "post",
-        url: "http://localhost:3001/reservations",
+        url: `http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/${process.env.REACT_APP_DB_NAME}`,
         data: resData,
       })
         .then((res) => {

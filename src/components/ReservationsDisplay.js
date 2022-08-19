@@ -9,6 +9,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import ReservationCard from "./ReservationCard";
 
+
 const theme = createTheme();
 
 export default function ReservationsDisplay(props) {
@@ -20,12 +21,12 @@ export default function ReservationsDisplay(props) {
   }, []);
 
   const getReservations = async () => {
-    const reservationData = await axios.get(`http://localhost:3001/reservations`);
+    const reservationData = await axios.get(`http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/${process.env.REACT_APP_DB_NAME}`);
     setReservations(reservationData.data);
   };
 
   const cancelReservation = async (id) => {
-    await axios.delete(`http://localhost:3001/reservations/${id}`)
+    await axios.delete(`http://${process.env.REACT_APP_SERVER_URL}:${process.env.REACT_APP_SERVER_PORT}/${process.env.REACT_APP_DB_NAME}/${id}`)
       .then((res) => {
         console.log(res);
       })
