@@ -8,7 +8,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 let puppetAttempts = 0;
 
 const makeReservation = async (resData, courtNum) => {
-  // const inPositionTime = performance.now();
+  const inPositionTime = performance.now();
   console.log("makeReservation() running...");
   puppetAttempts++;
 
@@ -81,7 +81,7 @@ const makeReservation = async (resData, courtNum) => {
   const dayModifier = currentMonth === resData.month ? 2 : 1;
 
   // SCHEDULE CRON JOB ********************************************************
-  // console.log("inPositionTime: ", Math.round(performance.now() - inPositionTime), " ms");
+  console.log("inPositionTime: ", Math.round(performance.now() - inPositionTime), " ms");
 
   if (resData.error) {
     const date = new Date();
@@ -89,7 +89,8 @@ const makeReservation = async (resData, courtNum) => {
   }
 
   cron.schedule(resData.cronString, async () => {
-    // const startTime = performance.now();
+    console.log("Inner CRON JOB RUNNING...");
+    const startTime = performance.now();
     dates[day - dayModifier].click().catch((e) => errorRetry(e));
     await page
       .waitForSelector('td[class="open pointer"]')
@@ -119,7 +120,7 @@ const makeReservation = async (resData, courtNum) => {
       .$eval('input[id="SaveReservation"]', (e) => e.click())
       .catch((e) => errorRetry(e));
     await browser.close();
-    // console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+    console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
   });
 };
 
