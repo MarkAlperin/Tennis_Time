@@ -1,6 +1,6 @@
 const makeReservation = require("../scripts/makeReservation");
 const Reservations = require("../db/index.js");
-const helpers = require("../helpers/helpers");
+// const helpers = require("../helpers/helpers");
 
 const findAndMakeReservations = async () => {
   console.log("findAndMakeReservations() running...");
@@ -14,10 +14,10 @@ const findAndMakeReservations = async () => {
     const reservationWindowDays = 14.509;
 
     if (resData.isRandi && diffDays <= reservationWindowDays) {
-      resData.cronString = helpers.makeCronString(date);
-      // resData.cronString = "0 0 8 * * *";
+      // resData.cronString = helpers.makeCronString(date);
+      resData.cronString = "0 0 8 * * *";
       resData.error = false;
-      for (let courtNum = 0; courtNum < resData.courts.length; courtNum++) {
+      for (let courtNum = 0; courtNum < 2; courtNum++) {
         makeReservation(resData, courtNum);
       }
       Reservations.findByIdAndUpdate(resData._id, {

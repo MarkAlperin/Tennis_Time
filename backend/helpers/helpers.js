@@ -2,8 +2,8 @@
 const makeCronString = (date) => {
   let seconds = date.getSeconds();
   let minutes = date.getMinutes();
-  let cronString = `${seconds < 35 ? seconds + 25 : seconds - 35} ${
-    seconds < 35 ? minutes : minutes + 1
+  let cronString = `${seconds < 30 ? seconds + 30 : seconds - 30} ${
+    seconds < 30 ? minutes : minutes + 1
   } ${date.getHours()} ${date.getDate()} ${date.getMonth() + 1} * `;
   return cronString;
 };
