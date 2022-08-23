@@ -6,7 +6,7 @@ const ResPage = React.lazy(() => import("./components/ResPage"));
 
 export default function App() {
   return (
- <BrowserRouter>
+  <BrowserRouter>
       <Routes>
         <Route
           path="/"

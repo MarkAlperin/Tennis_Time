@@ -15,13 +15,13 @@ import helpers from "./helpers/helpers";
 const theme = createTheme();
 const localRandiAuth = localStorage.getItem("localRandiAuth");
 
-export default function ResPage({isRandi}) {
+export default function ResPage() {
   const [reservations, setReservations] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     getReservations();
-  }, []);
+  });
 
   const getReservations = async () => {
     if (localRandiAuth) {
