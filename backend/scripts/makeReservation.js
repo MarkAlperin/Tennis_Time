@@ -100,7 +100,7 @@ const makeReservation = async (
     Math.round(performance.now() - inPositionTime),
     " ms"
   );
-  console.log("SCHEDULING CRON JOB...", resData.cronString, new Date());
+  console.log("SCHEDULING CRON JOB...");
 
   if (resData.error) {
     const date = new Date();
@@ -164,7 +164,7 @@ const makeReservation = async (
       console.log("ERROR: G POINTER NOT FOUND ",  logString);
 
       Reservations.findByIdAndUpdate(resData._id, {
-        $set: { isFailed: true },
+        $set: { isAttempted: true },
       }).exec((err, data) => {
         if (!err) {
           console.log("UPDATED FAILED RESERVATION: ", data);

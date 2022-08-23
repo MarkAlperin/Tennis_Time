@@ -29,7 +29,7 @@ const findAndMakeReservations = async (options) => {
         console.log("RUNNING makeReservation() for: ", logString);
         makeReservation(resData, courtNum, twilioClient, Reservations, logString);
       }
-      cron.schedule("0 2 22 * * *", async () => {
+      cron.schedule("0 2 14 * * *", async () => {
         let resCheck = await Reservations.findById(resData._id);
         if (!resCheck.isScheduled) {
           twilioClient.messages.create({
