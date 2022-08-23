@@ -15,7 +15,7 @@ const findAndMakeReservations = async (options) => {
     const diffTime = Math.abs(new Date(resData.date) - date);
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
     const reservationWindowDays = 14.509;
-    console.log("diff - reswindow: ", diffDays - reservationWindowDays);
+    console.log("diff <= reswindow: ", diffDays <= reservationWindowDays);
     if (!resData.isScheduled && diffDays <= reservationWindowDays) {
 
       resData.cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";

@@ -31,6 +31,7 @@ const makeReservation = async (resData, courtNum) => {
     } else {
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...");
+      await browser.close();
     }
   };
 
@@ -120,7 +121,11 @@ const makeReservation = async (resData, courtNum) => {
     await page
       .$eval('input[id="SaveReservation"]', (e) => e.click())
       .catch((e) => errorRetry(e));
-    // await browser.close();
+
+    await page.waitForSelector('td[class="G pointer"]')
+    console.log("FOUND G POINTER")
+
+    await browser.close();
     console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
   });
 };
