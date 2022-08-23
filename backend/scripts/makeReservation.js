@@ -1,26 +1,19 @@
 #!/usr/bin/env node
 const puppeteer = require("puppeteer");
 const cron = require("node-cron");
-const twilio = require("twilio");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
-console.log(process.env.TWILIO_ACCOUNT_SID);
-console.log(process.env.TWILIO_AUTH_TOKEN);
-
-const client = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-
-
 let puppetAttempts = 0;
 
-const makeReservation = async (resData, courtNum) => {
+const makeReservation = async (resData, courtNum, twilioClient) => {
   const inPositionTime = performance.now();
   console.log("makeReservation() RUNNING...");
   puppetAttempts++;
 
   // LAUNCH PAGE ***************************************************************
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
+    executablePath: "/usr/bin/chromium-browser",
     headless: true,
     ignoreHTTPSErrors: true,
   });
@@ -37,20 +30,22 @@ const makeReservation = async (resData, courtNum) => {
     } else {
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...");
-      client.messages.create({
-        body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Please try again.`,
-        from: process.env.TWILIO_FROM_NUMBER,
-        to: process.env.TWILIO_TO_NUMBER,
-      })
-      .then((message) => console.log(message.sid));
+      twilioClient.messages
+        .create({
+          body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Please try again.`,
+          from: process.env.TWILIO_FROM_NUMBER,
+          to: process.env.TWILIO_TO_NUMBER,
+        })
+        .then((message) => console.log(message.sid));
 
       await browser.close();
-
     }
   };
 
   // SET LOCATION *************************************************************
-  await page.select("select#facility_num", resData.facility).catch((e) => errorRetry(e));
+  await page
+    .select("select#facility_num", resData.facility)
+    .catch((e) => errorRetry(e));
   await page.click("input#btnSubmit").catch((e) => errorRetry(e));
 
   // SIGNING IN  ****************************************************************
@@ -96,12 +91,20 @@ const makeReservation = async (resData, courtNum) => {
   const dayModifier = currentMonth === resData.month ? 2 : 1;
 
   // SCHEDULE CRON JOB ********************************************************
-  console.log("inPositionTime: ", Math.round(performance.now() - inPositionTime), " ms");
+  console.log(
+    "inPositionTime: ",
+    Math.round(performance.now() - inPositionTime),
+    " ms"
+  );
   console.log("SCHEDULING CRON JOB...", resData.cronString, new Date());
 
   if (resData.error) {
     const date = new Date();
-    resData.cronString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
+    resData.cronString = `${
+      date.getSeconds() + 1
+    } ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${
+      date.getMonth() + 1
+    } * `;
   }
 
   cron.schedule(resData.cronString, async () => {
@@ -126,9 +129,7 @@ const makeReservation = async (resData, courtNum) => {
     await page
       .waitForSelector('select[id="Duration"]')
       .catch((e) => errorRetry(e));
-    await page
-      .select('select[id="Duration"]', "2")
-      .catch((e) => errorRetry(e));
+    await page.select('select[id="Duration"]', "2").catch((e) => errorRetry(e));
     await page
       .type('input[id="Extended_Desc"]', "Tennis Time!")
       .catch((e) => errorRetry(e));
@@ -136,19 +137,28 @@ const makeReservation = async (resData, courtNum) => {
       .$eval('input[id="SaveReservation"]', (e) => e.click())
       .catch((e) => errorRetry(e));
 
-    await page.waitForSelector('td[class="G pointer"]')
+    await page.waitForSelector('td[class="G pointer"]').catch((e) => {
+      console.error(e);
+      console.log("ERROR: G POINTER NOT FOUND, TEXTING USER VIA TWILIO...");
+      twilioClient.message.create({
+        body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Not fast enough...`,
+      });
+    });
     console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...");
-    client.messages.create({
+    twilioClient.messages.create({
       body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}!`,
       from: process.env.TWILIO_FROM_NUMBER,
       to: process.env.TWILIO_TO_NUMBER,
-    })
-    .then((message) => console.log(message.sid));
+    });
 
     await browser.close();
-    console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+    console.log(
+      `Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(
+        performance.now() - startTime
+      )} ms`
+    );
     return true;
   });
 };
 
-module.exports =  makeReservation;
+module.exports = makeReservation;

@@ -1,5 +1,7 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+const twilio = require("twilio");
+const twilioClient = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
 const makeReservation = require("../scripts/makeReservation");
@@ -24,7 +26,7 @@ const findAndMakeReservations = async (options) => {
       resData.error = false;
       for (let courtNum = 0; courtNum < 2; courtNum++) {
         console.log("RUNNING makeReservation() for courtNum", courtNum);
-        makeReservation(resData, courtNum);
+        makeReservation(resData, courtNum, twilioClient);
       }
       Reservations.findByIdAndUpdate(resData._id, {
         $set: { isScheduled: true },
