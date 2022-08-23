@@ -22,7 +22,8 @@ const findAndMakeReservations = async (options) => {
       resData.error = false;
       for (let courtNum = 0; courtNum < 2; courtNum++) {
         console.log("RUNNING makeReservation() for courtNum", courtNum);
-        makeReservation(resData, courtNum);
+        const result = await makeReservation(resData, courtNum);
+        console.log("result: ",courtNum, result);
       }
       Reservations.findByIdAndUpdate(resData._id, {
         $set: { isScheduled: true },

@@ -32,6 +32,7 @@ const makeReservation = async (resData, courtNum) => {
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...");
       await browser.close();
+      return false;
     }
   };
 
@@ -127,6 +128,7 @@ const makeReservation = async (resData, courtNum) => {
 
     await browser.close();
     console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+    return true;
   });
 };
 
