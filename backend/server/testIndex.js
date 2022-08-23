@@ -62,7 +62,6 @@ console.log(`Listening at http://localhost:${process.env.PORT}`);
 
 const date = new Date();
 let cronStartString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
-console.log("cronStart String", cronStartString);
 cron.schedule(cronStartString, () => {
   console.log("RUNNING findAndMakeReservations: ",  new Date());
   findAndMakeReservations({runNow: true});

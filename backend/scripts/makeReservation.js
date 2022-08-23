@@ -145,7 +145,7 @@ const makeReservation = async (
     await page.waitForSelector('td[class="G pointer"]')
     .then(() => {
       console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...", logString);
-      twilioClient.message.create({
+      twilioClient.messages.create({
       body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}!`,
       from: process.env.TWILIO_FROM_NUMBER,
       to: process.env.TWILIO_TO_NUMBER,
@@ -162,11 +162,11 @@ const makeReservation = async (
   }).catch( async (e) => {
       console.error(e);
       console.log("ERROR: G POINTER NOT FOUND, TEXTING USER VIA TWILIO...", logString);
-      twilioClient.message.create({
+      twilioClient.messages.create({
         body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Not fast enough...`,
       });
       await browser.close();
-      console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+      console.log(`Failed ${logString}, closing browser... Execution time:  ${Math.round(performance.now() - startTime)} ms`);
     });
 
     await browser.close();
