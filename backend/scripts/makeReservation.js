@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 const puppeteer = require("puppeteer");
 const cron = require("node-cron");
+const twilio = require("twilio");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+const client = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
 let puppetAttempts = 0;
 
-const makeReservation = async (resData, courtNum, twilioClient) => {
+const makeReservation = async (resData, courtNum) => {
   const inPositionTime = performance.now();
   console.log("makeReservation() RUNNING...");
   puppetAttempts++;
@@ -31,7 +33,7 @@ const makeReservation = async (resData, courtNum, twilioClient) => {
     } else {
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...");
-      twilioClient.messages.create({
+      client.messages.create({
         body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Please try again.`,
         from: process.env.TWILIO_FROM_NUMBER,
         to: process.env.TWILIO_TO_NUMBER,
@@ -132,7 +134,7 @@ const makeReservation = async (resData, courtNum, twilioClient) => {
 
     await page.waitForSelector('td[class="G pointer"]')
     console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...");
-    twilioClient.messages.create({
+    client.messages.create({
       body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}!`,
       from: process.env.TWILIO_FROM_NUMBER,
       to: process.env.TWILIO_TO_NUMBER,
