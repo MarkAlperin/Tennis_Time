@@ -31,6 +31,13 @@ const makeReservation = async (resData, courtNum, twilioClient) => {
     } else {
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...");
+      twilioClient.messages.create({
+        body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Please try again.`,
+        from: process.env.TWILIO_NUMBER,
+        to: process.env.PHONE_NUMBER,
+      })
+      .then((message) => console.log(message.sid));
+
       await browser.close();
 
     }

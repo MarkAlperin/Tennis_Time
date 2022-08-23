@@ -1,4 +1,6 @@
 const twilio = require("twilio");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const client = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 const makeReservation = require("../scripts/makeReservation");
