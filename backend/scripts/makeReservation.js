@@ -33,8 +33,8 @@ const makeReservation = async (resData, courtNum, twilioClient) => {
       console.log("Too many puppeteer errors. Exiting...");
       twilioClient.messages.create({
         body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Please try again.`,
-        from: process.env.TWILIO_NUMBER,
-        to: process.env.PHONE_NUMBER,
+        from: process.env.TWILIO_FROM_NUMBER,
+        to: process.env.TWILIO_TO_NUMBER,
       })
       .then((message) => console.log(message.sid));
 
@@ -134,8 +134,8 @@ const makeReservation = async (resData, courtNum, twilioClient) => {
     console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...");
     twilioClient.messages.create({
       body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}!`,
-      to: process.env.PHONE_NUMBER,
-      from: process.env.TWILIO_NUMBER,
+      from: process.env.TWILIO_FROM_NUMBER,
+      to: process.env.TWILIO_TO_NUMBER,
     })
     .then((message) => console.log(message.sid));
 
