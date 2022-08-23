@@ -7,7 +7,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 let puppetAttempts = 0;
 
-const makeReservation = async (resData, courtNum) => {
+const makeReservation = async (resData, courtNum, twilioClient) => {
   const inPositionTime = performance.now();
   console.log("makeReservation() RUNNING...");
   puppetAttempts++;
@@ -27,12 +27,12 @@ const makeReservation = async (resData, courtNum) => {
     if (2 > puppetAttempts) {
       await browser.close();
       resData.error = true;
-      await makeReservation(resData);
+      makeReservation(resData);
     } else {
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...");
       await browser.close();
-      return false;
+
     }
   };
 
@@ -46,7 +46,7 @@ const makeReservation = async (resData, courtNum) => {
     .$eval('a[href="SignIn"]', (el) => el.click())
     .catch((e) => errorRetry(e));
   await page.waitForSelector('input[id="user_id"]').catch((e) => errorRetry(e));
-  console.log("Signing in...", process.env.USERNAME, process.env.PASSWORD);
+  console.log("Signing in...", process.env.USERNAME);
   await page
     .type('input[id="user_id"]', process.env.USERNAME)
     .catch((e) => errorRetry(e));
@@ -124,7 +124,13 @@ const makeReservation = async (resData, courtNum) => {
       .catch((e) => errorRetry(e));
 
     await page.waitForSelector('td[class="G pointer"]')
-    console.log("FOUND G POINTER")
+    console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...");
+    twilioClient.messages.create({
+      body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}!`,
+      to: process.env.PHONE_NUMBER,
+      from: process.env.TWILIO_NUMBER,
+    })
+    .then((message) => console.log(message.sid));
 
     await browser.close();
     console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);

@@ -1,3 +1,6 @@
+const twilio = require("twilio");
+const client = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
 const makeReservation = require("../scripts/makeReservation");
 const Reservations = require("../db/index.js");
 const helpers = require("../helpers/helpers");
@@ -10,20 +13,17 @@ const findAndMakeReservations = async (options) => {
 
   for (let i = 0; i < reservations.length; i++) {
     const resData = reservations[i];
-    console.log("length: ", reservations.length);
     const date = new Date();
     const diffTime = Math.abs(new Date(resData.date) - date);
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
     const reservationWindowDays = 14.509;
-    console.log("diff <= reswindow: ", diffDays <= reservationWindowDays);
     if (!resData.isScheduled && diffDays <= reservationWindowDays) {
 
       resData.cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
       resData.error = false;
       for (let courtNum = 0; courtNum < 2; courtNum++) {
         console.log("RUNNING makeReservation() for courtNum", courtNum);
-        const result = await makeReservation(resData, courtNum);
-        console.log("result: ",courtNum, result);
+        makeReservation(resData, courtNum, client);
       }
       Reservations.findByIdAndUpdate(resData._id, {
         $set: { isScheduled: true },
