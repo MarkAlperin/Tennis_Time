@@ -1,3 +1,4 @@
+const cron = require("node-cron");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const twilio = require("twilio");
@@ -26,9 +27,19 @@ const findAndMakeReservations = async (options) => {
       for (let courtNum = 0; courtNum < 2; courtNum++) {
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
         console.log("RUNNING makeReservation() for: ", logString);
-        const isSuccessful = await makeReservation(resData, courtNum, twilioClient, Reservations, logString);
-        console.log("isSuccessful: ", isSuccessful);
+        makeReservation(resData, courtNum, twilioClient, Reservations, logString);
       }
+      cron.schedule("0 2 14 * * *", async () => {
+        let resCheck = await Reservations.findById(resData._id);
+        if (!resCheck.isScheduled) {
+          twilioClient.messages.create({
+            body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`,
+            from: process.env.TWILIO_FROM_NUMBER,
+            to: process.env.TWILIO_TO_NUMBER,
+        });
+        }
+    });
+
     }
   }
 };
