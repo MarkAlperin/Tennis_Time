@@ -14,8 +14,8 @@ const makeReservation = async (resData, courtNum) => {
 
   // LAUNCH PAGE ***************************************************************
   const browser = await puppeteer.launch({
-    // executablePath: '/usr/bin/chromium-browser',
-    headless: false,
+    executablePath: '/usr/bin/chromium-browser',
+    headless: true,
     ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
@@ -97,7 +97,7 @@ const makeReservation = async (resData, courtNum) => {
       .waitForSelector('td[class="open pointer"]')
       .catch((e) => errorRetry(e));
 
-    const {time} = resData;
+    const { time } = resData;
     const court = resData.courts[courtNum];
     await page
       .evaluate(
