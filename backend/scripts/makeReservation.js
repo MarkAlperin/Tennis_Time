@@ -4,6 +4,10 @@ const cron = require("node-cron");
 const twilio = require("twilio");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
+console.log(process.env.TWILIO_ACCOUNT_SID);
+console.log(process.env.TWILIO_AUTH_TOKEN);
+
 const client = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
