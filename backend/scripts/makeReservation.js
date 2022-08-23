@@ -9,13 +9,13 @@ let puppetAttempts = 0;
 
 const makeReservation = async (resData, courtNum) => {
   const inPositionTime = performance.now();
-  console.log("makeReservation() running...");
+  console.log("makeReservation() RUNNING...");
   puppetAttempts++;
 
   // LAUNCH PAGE ***************************************************************
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
-    headless: true,
+    // executablePath: '/usr/bin/chromium-browser',
+    headless: false,
     ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
@@ -82,6 +82,7 @@ const makeReservation = async (resData, courtNum) => {
 
   // SCHEDULE CRON JOB ********************************************************
   console.log("inPositionTime: ", Math.round(performance.now() - inPositionTime), " ms");
+  console.log("SCHEDULING CRON JOB...", resData.cronString, new Date());
 
   if (resData.error) {
     const date = new Date();
@@ -119,7 +120,7 @@ const makeReservation = async (resData, courtNum) => {
     await page
       .$eval('input[id="SaveReservation"]', (e) => e.click())
       .catch((e) => errorRetry(e));
-    await browser.close();
+    // await browser.close();
     console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
   });
 };

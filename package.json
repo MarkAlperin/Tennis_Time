@@ -36,6 +36,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "node backend/server/index.js",
+    "server-now": "node backend/server/testIndex.js",
     "server-dev": "npx nodemon --watch server backend/server/index.js"
   },
   "eslintConfig": {
