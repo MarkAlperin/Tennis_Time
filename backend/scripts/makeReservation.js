@@ -6,7 +6,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 let puppetAttempts = 0;
 
-const makeReservation = async (resData, courtNum, twilioClient) => {
+const makeReservation = async (resData, courtNum, twilioClient, Reservations) => {
   const inPositionTime = performance.now();
   console.log("makeReservation() RUNNING...");
   puppetAttempts++;
@@ -114,6 +114,7 @@ const makeReservation = async (resData, courtNum, twilioClient) => {
     await page
       .waitForSelector('td[class="open pointer"]')
       .catch((e) => errorRetry(e));
+    console.log("DATE SELECTED...");
 
     const { time } = resData;
     const court = resData.courts[courtNum];
@@ -150,7 +151,15 @@ const makeReservation = async (resData, courtNum, twilioClient) => {
       from: process.env.TWILIO_FROM_NUMBER,
       to: process.env.TWILIO_TO_NUMBER,
     });
-
+    Reservations.findByIdAndUpdate(resData._id, {
+      $set: { isScheduled: true },
+    }).exec((err, data) => {
+      if (!err) {
+        console.log("UPDATED RESERVATION: ", data);
+      } else {
+        console.log("ERROR UPDATING RESERVATION: ", err);
+      }
+    });
     await browser.close();
     console.log(
       `Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(
