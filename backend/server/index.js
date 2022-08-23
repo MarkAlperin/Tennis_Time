@@ -60,11 +60,11 @@ app.delete("/reservations/:id", (req, res) => {
 app.listen(process.env.PORT);
 console.log(`Listening at http://localhost:${process.env.PORT}`);
 
-const date = new Date();
-let cronStartString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
-console.log("cronStart String", cronStartString);
-// const cronStartString = "0 59 13 * * *";
-// cron.schedule(cronStartString, () => {
-//   console.log("cron trigger line 67 backend/server/index.js", new Date());
-//   findAndMakeReservations();
-// })
+// const date = new Date();
+// let cronStartString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
+// console.log("cronStart String", cronStartString);
+const cronStartString = "0 59 13 * * *";
+cron.schedule(cronStartString, () => {
+  console.log("cron trigger line 67 backend/server/index.js", new Date());
+  findAndMakeReservations();
+})
