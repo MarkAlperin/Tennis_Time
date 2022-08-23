@@ -164,6 +164,17 @@ const makeReservation = async (
       console.log("ERROR: G POINTER NOT FOUND, TEXTING USER VIA TWILIO...", logString);
       twilioClient.messages.create({
         body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Not fast enough...`,
+        from: process.env.TWILIO_FROM_NUMBER,
+        to: process.env.TWILIO_TO_NUMBER,
+      });
+      Reservations.findByIdAndUpdate(resData._id, {
+        $set: { isFailed: true },
+      }).exec((err, data) => {
+        if (!err) {
+          console.log("UPDATED FAILED RESERVATION: ", data);
+        } else {
+          console.log("ERROR UPDATING FAILED RESERVATION: ", err);
+        }
       });
       await browser.close();
       console.log(`Failed ${logString}, closing browser... Execution time:  ${Math.round(performance.now() - startTime)} ms`);

@@ -26,7 +26,8 @@ const findAndMakeReservations = async (options) => {
       for (let courtNum = 0; courtNum < 2; courtNum++) {
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
         console.log("RUNNING makeReservation() for: ", logString);
-        makeReservation(resData, courtNum, twilioClient, Reservations, logString);
+        const isSuccessful = await makeReservation(resData, courtNum, twilioClient, Reservations, logString);
+        console.log("isSuccessful: ", isSuccessful);
       }
     }
   }
