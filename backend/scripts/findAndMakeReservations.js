@@ -9,7 +9,7 @@ const Reservations = require("../db/index.js");
 const helpers = require("../helpers/helpers");
 
 const findAndMakeReservations = async (options) => {
-  console.log("findAndMakeReservations() RUNNING...", new Date());
+  console.log("findAndMakeReservations() RUNNING...");
   const { runNow } = options
   console.log("runNow: ", runNow);
   const reservations = await Reservations.find({}).sort({ date: -1 });
@@ -21,30 +21,13 @@ const findAndMakeReservations = async (options) => {
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
     const reservationWindowDays = 14.509;
     if (!resData.isScheduled && diffDays <= reservationWindowDays) {
-
       resData.cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
       resData.error = false;
       for (let courtNum = 0; courtNum < 2; courtNum++) {
-        console.log("RUNNING makeReservation() for courtNum", courtNum);
-        makeReservation(resData, courtNum, twilioClient);
+        const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
+        console.log("RUNNING makeReservation() for: ", logString);
+        makeReservation(resData, courtNum, twilioClient, Reservations, logString);
       }
-      Reservations.findByIdAndUpdate(resData._id, {
-        $set: { isScheduled: true },
-      }).exec((err, data) => {
-        if (!err) {
-          console.log("UPDATED RESERVATION: ", data);
-        } else {
-          console.log("ERROR UPDATING RESERVATION: ", err);
-        }
-      });
-    } else if (!resData.isRandi) {
-      Reservations.findByIdAndDelete(resData._id).exec((err, data) => {
-        if (!err) {
-          console.log("DELETED RESERVATION: ", data);
-        } else {
-          console.log("ERROR DELETING RESERVATION: ", err);
-        }
-      });
     }
   }
 };

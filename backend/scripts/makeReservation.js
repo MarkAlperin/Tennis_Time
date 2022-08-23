@@ -6,9 +6,15 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 let puppetAttempts = 0;
 
-const makeReservation = async (resData, courtNum, twilioClient, Reservations) => {
+const makeReservation = async (
+  resData,
+  courtNum,
+  twilioClient,
+  Reservations,
+  logString,
+) => {
   const inPositionTime = performance.now();
-  console.log("makeReservation() RUNNING...");
+  console.log("makeReservation() RUNNING...", logString);
   puppetAttempts++;
 
   // LAUNCH PAGE ***************************************************************
@@ -22,22 +28,20 @@ const makeReservation = async (resData, courtNum, twilioClient, Reservations) =>
 
   // PUPPETTER ERROR HANDLER ***************************************************
   const errorRetry = async (err) => {
-    console.log("ERROR: Executing errorRety()...");
+    console.log("ERROR: Executing errorRety()...", logString);
     if (2 > puppetAttempts) {
       await browser.close();
       resData.error = true;
       makeReservation(resData);
     } else {
       console.error(err.message);
-      console.log("Too many puppeteer errors. Exiting...");
+      console.log("Too many puppeteer errors. Exiting...", logString);
       twilioClient.messages
         .create({
-          body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Please try again.`,
+          body: `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`,
           from: process.env.TWILIO_FROM_NUMBER,
           to: process.env.TWILIO_TO_NUMBER,
-        })
-        .then((message) => console.log(message.sid));
-
+        });
       await browser.close();
     }
   };
@@ -126,7 +130,7 @@ const makeReservation = async (resData, courtNum, twilioClient, Reservations) =>
         { court, time }
       )
       .catch((e) => errorRetry(e));
-
+    console.log("TIME SELECTED...");
     await page
       .waitForSelector('select[id="Duration"]')
       .catch((e) => errorRetry(e));
@@ -138,15 +142,10 @@ const makeReservation = async (resData, courtNum, twilioClient, Reservations) =>
       .$eval('input[id="SaveReservation"]', (e) => e.click())
       .catch((e) => errorRetry(e));
 
-    await page.waitForSelector('td[class="G pointer"]').catch((e) => {
-      console.error(e);
-      console.log("ERROR: G POINTER NOT FOUND, TEXTING USER VIA TWILIO...");
+    await page.waitForSelector('td[class="G pointer"]')
+    .then(() => {
+      console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...", logString);
       twilioClient.message.create({
-        body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Not fast enough...`,
-      });
-    });
-    console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...");
-    twilioClient.messages.create({
       body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}!`,
       from: process.env.TWILIO_FROM_NUMBER,
       to: process.env.TWILIO_TO_NUMBER,
@@ -160,13 +159,19 @@ const makeReservation = async (resData, courtNum, twilioClient, Reservations) =>
         console.log("ERROR UPDATING RESERVATION: ", err);
       }
     });
+  }).catch( async (e) => {
+      console.error(e);
+      console.log("ERROR: G POINTER NOT FOUND, TEXTING USER VIA TWILIO...", logString);
+      twilioClient.message.create({
+        body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has failed. Not fast enough...`,
+      });
+      await browser.close();
+      console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+    });
+
     await browser.close();
-    console.log(
-      `Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(
-        performance.now() - startTime
-      )} ms`
-    );
-    return true;
+    console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+
   });
 };
 
