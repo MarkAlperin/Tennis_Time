@@ -151,7 +151,7 @@ const makeReservation = async (
       to: process.env.TWILIO_TO_NUMBER,
     });
     Reservations.findByIdAndUpdate(resData._id, {
-      $set: { isScheduled: true, isAttempted: true },
+      $set: { isReserved: true, isAttempted: true },
     }).exec((err, data) => {
       if (!err) {
         console.log("UPDATED RESERVATION: ", data);

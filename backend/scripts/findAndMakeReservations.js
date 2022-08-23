@@ -21,7 +21,7 @@ const findAndMakeReservations = async (options) => {
     const diffTime = Math.abs(new Date(resData.date) - date);
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
     const reservationWindowDays = 14.509;
-    if (!resData.isScheduled && diffDays <= reservationWindowDays) {
+    if (!resData.isAttempted && diffDays <= reservationWindowDays) {
       resData.cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
       resData.error = false;
       for (let courtNum = 0; courtNum < 2; courtNum++) {
@@ -31,7 +31,7 @@ const findAndMakeReservations = async (options) => {
       }
       cron.schedule("0 2 14 * * *", async () => {
         let resCheck = await Reservations.findById(resData._id);
-        if (!resCheck.isScheduled) {
+        if (!resCheck.isReserved) {
           twilioClient.messages.create({
             body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`,
             from: process.env.TWILIO_FROM_NUMBER,
