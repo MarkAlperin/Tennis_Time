@@ -14,7 +14,6 @@ app.use(express.json());
 app.use(morgan("tiny"));
 
 app.post("/reservations", async (req, res) => {
-  console.log("req.body: ", req.body);
   Reservations.findOneAndUpdate({ date: req.body.date }, req.body, {
     new: true,
     upsert: true,
@@ -61,9 +60,9 @@ app.delete("/reservations/:id", (req, res) => {
 app.listen(process.env.PORT);
 console.log(`Listening at http://localhost:${process.env.PORT}`);
 
-
-const cronStartString = "0 59 13 * * *";
+const date = new Date();
+let cronStartString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
 cron.schedule(cronStartString, () => {
   console.log("RUNNING findAndMakeReservations: ",  new Date());
-  findAndMakeReservations({ runNow: false });
-});
+  findAndMakeReservations({runNow: true});
+})

@@ -1,10 +1,16 @@
-
-const makeCronString = (date) => {
+const makeCronString = (date, runNow) => {
   let seconds = date.getSeconds();
   let minutes = date.getMinutes();
-  let cronString = `${seconds < 30 ? seconds + 30 : seconds - 30} ${
-    seconds < 30 ? minutes : minutes + 1
-  } ${date.getHours()} ${date.getDate()} ${date.getMonth() + 1} * `;
+  let cronString;
+  if (runNow) {
+    cronString = `${seconds < 50 ? seconds + 10 : seconds - 50} ${
+      seconds < 50 ? minutes : minutes + 1
+    } ${date.getHours()} ${date.getDate()} ${date.getMonth() + 1} * `;
+  } else {
+    cronString = `${seconds < 30 ? seconds + 30 : seconds - 30} ${
+      seconds < 30 ? minutes : minutes + 1
+    } ${date.getHours()} ${date.getDate()} ${date.getMonth() + 1} * `;
+  }
   return cronString;
 };
 
