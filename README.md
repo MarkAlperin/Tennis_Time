@@ -7,7 +7,7 @@ A web application that allows the client (my amazing mother-in-law 🙋🏼‍�
 The app was built using AWS, Node.js, MongoDB, Express, React, Material UI, and Puppeteer.
 
 ### Have a look!
-You can see it [here](https://markalperin.com/tennis-time), but some functionality is reserved just for the client.
+You can see it here [markalperin.com/tennis-time](https://markalperin.com/tennis-time), but some functionality is reserved just for the client.
 
  <br/><br/>
   <p align="center"><img src="/TennisTime.png" alt="a web app image" width="60%" height="auto" />  </p>
