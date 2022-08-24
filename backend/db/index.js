@@ -21,8 +21,8 @@ let reservationsSchema = new mongoose.Schema({
   courts: [String],
   game: String,
   humanTime: [String],
-  isRandi: Boolean,
-  isScheduled: Boolean,
+  isReserved: Boolean,
+  isAttempted: Boolean,
 });
 
 module.exports = mongoose.model("Reservations", reservationsSchema);
