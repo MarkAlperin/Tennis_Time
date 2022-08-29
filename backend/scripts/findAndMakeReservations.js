@@ -24,11 +24,11 @@ const findAndMakeReservations = async (options) => {
     if (!resData.isAttempted && diffDays <= reservationWindowDays) {
       resData.cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
       resData.error = false;
-      for (let courtNum = 0; courtNum < 1; courtNum++) {
+      for (let courtNum = 0; courtNum < 2; courtNum++) {
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
         console.log("RUNNING makeReservation() for: ", logString);
         // makeReservation(resData, courtNum, twilioClient, Reservations, logString);
-        makeReservation(resData);
+        makeReservation(resData, courtNum);
       }
       cron.schedule("0 2 14 * * *", async () => {
         let resCheck = await Reservations.findById(resData._id);
