@@ -22,12 +22,13 @@ const makeReservation = async (res) => {
     "sec-fetch-site": "same-origin",
     "sec-fetch-user": "?1",
     "upgrade-insecure-requests": "1",
-    "cookie": `device=PC; facility%5Fnum=${res.facility}; user%5Fid=randi%2Ehedberg`,
+    "cookie": "ASPSESSIONIDSEDQBSTC=KDODJJNBIJJFBALLNBAMDFJP; device=PC; facility%5Fnum=88; user%5Fid=randi%2Ehedberg",
     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   },
-  "body": body,
+  "body": "Reservation_Date=8%2F30%2F2022&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=31&Duration=2&Reservation_Type=G&Extended_Desc=",
   "method": "POST"
+
   }).then(res => {
     return res;;
   }).catch(err => {
