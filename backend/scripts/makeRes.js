@@ -4,6 +4,9 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const makeReservation = async (res) => {
   const dateStrings = res.humanTime[0].split("/");
   console.log(res)
+  const body = `Reservation_Date=${dateStrings[0]}%2F3${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=${res.time}&Duration=2&Reservation_Type=G&Extended_Desc=${res.desc ? res.desc : ""}`
+  console.log(body);
+  console.log(res.facility);
 
   fetch("https://sites.onlinecourtreservations.com/savereservation", {
   "headers": {
@@ -24,7 +27,7 @@ const makeReservation = async (res) => {
     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   },
-  "body": `Reservation_Date=${dateStrings[0]}%2F3${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=${res.time}&Duration=2&Reservation_Type=G&Extended_Desc=${res.desc ? res.desc : ""}`,
+  "body": body,
   "method": "POST"
   }).then(res => {
     return res;;
