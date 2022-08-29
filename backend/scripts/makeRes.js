@@ -4,8 +4,13 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const makeReservation = async (res) => {
   const dateStrings = res.humanTime[0].split("/");
   console.log("reservation: ", res)
-  // const body = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=${res.time}&Duration=2&Reservation_Type=G&Extended_Desc=${res.desc ? res.desc : ""}`
-  const body = "Reservation_Date=8%2F30%2F2022&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=31&Duration=2&Reservation_Type=G&Extended_Desc=";
+  const body = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=${res.time}&Duration=2&Reservation_Type=G&Extended_Desc=${res.desc ? res.desc : ""}`
+  const dody = "Reservation_Date=8%2F30%2F2022&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=31&Duration=2&Reservation_Type=G&Extended_Desc=";
+
+  console.log("body: ", body);
+  console.log("dody: ", dody);
+
+  console.log ("body === dody: ", body === dody);
 
   fetch("https://sites.onlinecourtreservations.com/savereservation", {
   "headers": {
