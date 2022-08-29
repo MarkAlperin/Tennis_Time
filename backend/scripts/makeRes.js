@@ -26,7 +26,7 @@ const makeReservation = async (res) => {
     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   },
-  "body": "Reservation_Date=8%2F30%2F2022&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=31&Duration=2&Reservation_Type=G&Extended_Desc=",
+  "body": body,
   "method": "POST"
   }).then(res => {
     console.log(res);
