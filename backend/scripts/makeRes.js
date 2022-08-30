@@ -23,15 +23,16 @@ const makeReservation = async (res, courtNum) => {
     "sec-fetch-user": "?1",
     "upgrade-insecure-requests": "1",
     "cookie": `ASPSESSIONIDSEDQBSTC=KDODJJNBIJJFBALLNBAMDFJP; device=PC; facility%5Fnum=${res.facility}; user%5Fid=randi%2Ehedberg; ASPSESSIONIDCWCTBRTA=JKOGHFKCCGDHBJBAGMHHCNCL`,
+    // "cookie": "ASPSESSIONIDSEDQBSTC=KDODJJNBIJJFBALLNBAMDFJP; device=PC; facility%5Fnum=88; user%5Fid=randi%2Ehedberg; ASPSESSIONIDCWCTBRTA=JKOGHFKCCGDHBJBAGMHHCNCL",
     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   },
   "body": body,
   "method": "POST"
   }).then(res => {
-    // console.log(res);
+    console.log("RAN FETCH...");
   }).catch(err => {
-    console.error(err);
+    console.error("ERROR RUNNING FETCH: ", err);
   });
 };
 
