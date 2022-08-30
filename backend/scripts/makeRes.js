@@ -29,7 +29,7 @@ const makeReservation = async (res, courtNum) => {
   "body": body,
   "method": "POST"
   }).then(res => {
-    console.log(res);
+    // console.log(res);
   }).catch(err => {
     console.error(err);
   });
