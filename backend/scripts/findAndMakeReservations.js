@@ -5,7 +5,7 @@ const twilio = require("twilio");
 const twilioClient = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
-const makeReservation = require("../scripts/makeRes");
+const makeReservation = require("../scripts/makeReservation");
 const Reservations = require("../db/index.js");
 const helpers = require("../helpers/helpers");
 
