@@ -5,7 +5,7 @@ const twilio = require("twilio");
 const twilioClient = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
-const makeReservation = require("../scripts/makeReservation");
+const makeReservation = require("../scripts/makeRes");
 const Reservations = require("../db/index.js");
 const helpers = require("../helpers/helpers");
 
@@ -27,7 +27,8 @@ const findAndMakeReservations = async (options) => {
       for (let courtNum = 0; courtNum < 2; courtNum++) {
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
         console.log("RUNNING makeReservation() for: ", logString);
-        makeReservation(resData, courtNum, twilioClient, Reservations, logString);
+        // makeReservation(resData, courtNum, twilioClient, Reservations, logString);
+        makeReservation(resData, courtNum);
       }
       cron.schedule("0 2 14 * * *", async () => {
         let resCheck = await Reservations.findById(resData._id);

@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(morgan("tiny"));
 
 app.post("/reservations", async (req, res) => {
+  console.log("req.body: ", req.body);
   Reservations.findOneAndUpdate({ date: req.body.date }, req.body, {
     new: true,
     upsert: true,
