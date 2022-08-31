@@ -103,7 +103,7 @@ const makeReservation = async (
   console.log("SCHEDULING CRON JOB...");
 
   const cookies = await page.cookies();
-  console.log("COOKIES: ", cookies);
+  console.log("COOKIES: ", cookies.filter(cookie => cookie.name === 'ASPSESSIONIDSGCRCQSC')[0].value);
   // if (resData.error) {
   //   const date = new Date();
   //   resData.cronString = `${
