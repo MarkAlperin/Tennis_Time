@@ -17,6 +17,7 @@ const findAndMakeReservations = async (options) => {
 
   for (let i = 0; i < reservations.length; i++) {
     const resData = reservations[i];
+    console.log("resData: ", resData);
     const date = new Date();
     const diffTime = Math.abs(new Date(resData.date) - date);
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
