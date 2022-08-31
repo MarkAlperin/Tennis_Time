@@ -30,7 +30,7 @@ const findAndMakeReservations = async (options) => {
         // makeReservation(resData, courtNum, twilioClient, Reservations, logString);
         makeReservation(resData, courtNum);
       }
-<<<<<<< HEAD
+
       // Reservations.findByIdAndUpdate(resData._id, {
       //   $set: { isScheduled: true },
       // }).exec((err, data) => {
@@ -48,7 +48,7 @@ const findAndMakeReservations = async (options) => {
     //       console.log("ERROR DELETING RESERVATION: ", err);
     //     }
     //   });
-=======
+
       cron.schedule("0 2 14 * * *", async () => {
         let resCheck = await Reservations.findById(resData._id);
         if (!resCheck.isReserved) {
@@ -60,22 +60,10 @@ const findAndMakeReservations = async (options) => {
         }
     });
 
->>>>>>> 8d0ef37c4fe808b7160bdb425829f6f423d326c5
+
     }
   }
 };
 
 module.exports = findAndMakeReservations;
 
-// if (cluster.isMaster) {
-//   const totalCPUs = require("os").cpus().length;
-//   const numCourts = resData.courts.length;
-//   const numClusters = numCourts > totalCPUs ? totalCPUs : numCourts;
-//   console.log(`Creating ${numClusters} clusters`);
-//   for (let i = 0; i < numClusters; i++) {
-//     cluster.fork({ clusterInstance: i });
-//   }
-// } else {
-//   console.log("Cluster instance: ", process.env.clusterInstance);
-//   resData.court = resData.courts[process.env.clusterInstance];
-// }
