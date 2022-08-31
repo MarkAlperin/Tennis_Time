@@ -25,6 +25,9 @@ const makeReservation = async (res, courtNum) => {
     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   }
+  console.log("url: ", url);
+  console.log("options: ", options);
+  console.log("headers: ", headers);
 
 
   fetch(url, headers, options)
