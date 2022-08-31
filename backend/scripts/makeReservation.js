@@ -2,7 +2,9 @@
 const puppeteer = require("puppeteer");
 const cron = require("node-cron");
 const path = require("path");
+const makeRes=require("./makeRes");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
 
 let puppetAttempts = 0;
 
@@ -103,7 +105,9 @@ const makeReservation = async (
   console.log("SCHEDULING CRON JOB...");
 
   const cookies = await page.cookies();
-  console.log("COOKIES: ", cookies.filter(cookie => cookie.name === 'ASPSESSIONIDSGCRCQSC')[0].value);
+  const cookie = cookies.filter(cookie => cookie.name === 'ASPSESSIONIDSGCRCQSC')[0].value;
+  resData.sessionCookie = cookie;
+  makeRes(resData, courtNum)
   // if (resData.error) {
   //   const date = new Date();
   //   resData.cronString = `${
