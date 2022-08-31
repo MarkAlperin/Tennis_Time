@@ -61,9 +61,9 @@ app.delete("/reservations/:id", (req, res) => {
 app.listen(process.env.PORT);
 console.log(`Listening at http://localhost:${process.env.PORT}`);
 
-
-const cronStartString = "0 0 14 * * *";
+const date = new Date();
+let cronStartString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
 cron.schedule(cronStartString, () => {
   console.log("RUNNING findAndMakeReservations: ",  new Date());
-  findAndMakeReservations({ runNow: false });
-});
+  findAndMakeReservations({runNow: true});
+})

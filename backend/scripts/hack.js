@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
@@ -8,6 +9,9 @@ const makeReservation = async (res, courtNum) => {
 
 
   fetch("https://sites.onlinecourtreservations.com/savereservation", {
+=======
+fetch("https://sites.onlinecourtreservations.com/savereservation", {
+>>>>>>> 8d0ef37c4fe808b7160bdb425829f6f423d326c5
   "headers": {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "accept-language": "en-US,en;q=0.9",
@@ -22,6 +26,7 @@ const makeReservation = async (res, courtNum) => {
     "sec-fetch-site": "same-origin",
     "sec-fetch-user": "?1",
     "upgrade-insecure-requests": "1",
+<<<<<<< HEAD
     "cookie": `ASPSESSIONIDSEDQBSTC=KDODJJNBIJJFBALLNBAMDFJP; device=PC; facility%5Fnum=${res.facility}; user%5Fid=randi%2Ehedberg; ASPSESSIONIDCWCTBRTA=MAOHHFKCPIOKLHLMNNCGKECF`,
     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
     "Referrer-Policy": "strict-origin-when-cross-origin"
@@ -36,3 +41,34 @@ const makeReservation = async (res, courtNum) => {
 };
 
 module.exports = makeReservation;
+=======
+    "cookie": "ASPSESSIONIDSEDQBSTC=KDODJJNBIJJFBALLNBAMDFJP; device=PC; facility%5Fnum=88; user%5Fid=randi%2Ehedberg; ASPSESSIONIDCWCTBRTA=JKOGHFKCCGDHBJBAGMHHCNCL",
+    "Referer": "https://sites.onlinecourtreservations.com/Reserve",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  },
+  "body": "Reservation_Date=9%2F13%2F2022&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=31&Duration=2&Reservation_Type=G&Extended_Desc=",
+  "method": "POST"
+});
+// fetch("https://sites.onlinecourtreservations.com/savereservation", {
+//   "headers": {
+//     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+//     "accept-language": "en-US,en;q=0.9",
+//     "cache-control": "no-cache",
+//     "content-type": "application/x-www-form-urlencoded",
+//     "pragma": "no-cache",
+//     "sec-ch-ua": "\"Chromium\";v=\"104\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"104\"",
+//     "sec-ch-ua-mobile": "?0",
+//     "sec-ch-ua-platform": "\"macOS\"",
+//     "sec-fetch-dest": "document",
+//     "sec-fetch-mode": "navigate",
+//     "sec-fetch-site": "same-origin",
+//     "sec-fetch-user": "?1",
+//     "upgrade-insecure-requests": "1",
+//     "cookie": "ASPSESSIONIDSEDQBSTC=KDODJJNBIJJFBALLNBAMDFJP; device=PC; facility%5Fnum=88; user%5Fid=randi%2Ehedberg; ASPSESSIONIDCWCTBRTA=JKOGHFKCCGDHBJBAGMHHCNCL",
+//     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
+//     "Referrer-Policy": "strict-origin-when-cross-origin"
+//   },
+//   "body": "Reservation_Date=9%2F13%2F2022&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=27&Duration=2&Reservation_Type=G&Extended_Desc=",
+//   "method": "POST"
+// });
+>>>>>>> 8d0ef37c4fe808b7160bdb425829f6f423d326c5

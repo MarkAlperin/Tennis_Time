@@ -28,6 +28,7 @@
     "react-scripts": "5.0.1",
     "styled": "^1.0.0",
     "styled-components": "^5.3.5",
+    "twilio": "^3.80.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -36,6 +37,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "node backend/server/index.js",
+    "server-now": "node backend/server/testIndex.js",
     "server-dev": "npx nodemon --watch server backend/server/index.js"
   },
   "eslintConfig": {
