@@ -6,6 +6,7 @@ const makeReservation = async (res, courtNum) => {
   console.log("reservation: ", res)
   const body = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=${courtNum}&Start_Time=${res.time}&Duration=2&Reservation_Type=G&Extended_Desc=${res.desc ? res.desc : ""}`
 
+  console.log("SessionCookie: ", res.sessionCookie);
 
   fetch("https://sites.onlinecourtreservations.com/savereservation", {
   "headers": {
