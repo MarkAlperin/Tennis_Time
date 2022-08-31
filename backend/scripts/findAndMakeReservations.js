@@ -20,23 +20,23 @@ const findAndMakeReservations = async () => {
       for (let courtNum = 0; courtNum < 2; courtNum++) {
         makeReservation(resData, courtNum);
       }
-      Reservations.findByIdAndUpdate(resData._id, {
-        $set: { isScheduled: true },
-      }).exec((err, data) => {
-        if (!err) {
-          console.log("UPDATED RESERVATION: ", data);
-        } else {
-          console.log("ERROR UPDATING RESERVATION: ", err);
-        }
-      });
-    } else if (!resData.isRandi) {
-      Reservations.findByIdAndDelete(resData._id).exec((err, data) => {
-        if (!err) {
-          console.log("DELETED RESERVATION: ", data);
-        } else {
-          console.log("ERROR DELETING RESERVATION: ", err);
-        }
-      });
+      // Reservations.findByIdAndUpdate(resData._id, {
+      //   $set: { isScheduled: true },
+      // }).exec((err, data) => {
+      //   if (!err) {
+      //     console.log("UPDATED RESERVATION: ", data);
+      //   } else {
+      //     console.log("ERROR UPDATING RESERVATION: ", err);
+      //   }
+      // });
+    // } else if (!resData.isRandi) {
+    //   Reservations.findByIdAndDelete(resData._id).exec((err, data) => {
+    //     if (!err) {
+    //       console.log("DELETED RESERVATION: ", data);
+    //     } else {
+    //       console.log("ERROR DELETING RESERVATION: ", err);
+    //     }
+    //   });
     }
   }
 };
