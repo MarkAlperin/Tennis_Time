@@ -25,9 +25,9 @@ const makeReservation = async (res, courtNum) => {
     "Referrer-Policy": "strict-origin-when-cross-origin"
   }
   const options = {
-    headers,
-    body,
-    method: "POST"
+    "headers": headers,
+    "body": body,
+    "method": "POST"
   };
 
   console.log("url: ", url);
