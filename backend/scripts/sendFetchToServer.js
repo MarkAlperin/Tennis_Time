@@ -5,7 +5,7 @@ const sendFetchToServer = async (res, courtsIdx, cookieStr) => {
 
   const url = "https://sites.onlinecourtreservations.com/savereservation"
   const dateStrings = res.humanTime[0].split("/");
-  const bodyStr = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=${res.game === "Tennis" ? "44" : "46"}&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=${res.courts[courtsIdx]}&Start_Time=${res.time}&Duration=2&Extended_Desc=`;
+  const bodyStr = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=${res.game === "Tennis" ? "44" : "46"}&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=${res.courts[courtsIdx]}&Start_Time=${res.time}&Duration=2&${res.game === "Tennis" ? "" : "Reservation_Type=G&"}Extended_Desc=Complements+of+Mark+%26%23128032%3B+and+Doobs+%26%23128044%3B`;
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "accept-language": "en-US,en;q=0.9",
@@ -32,7 +32,7 @@ const sendFetchToServer = async (res, courtsIdx, cookieStr) => {
 
   fetch(url, options)
     .then(res => {
-      console.log("FETCH COOKIES: ", cookieStr)
+      console.log(`FETCH COOKIES: ${cookieStr}\n`)
       return res;
     }).catch(err => {
       console.error("ERROR RUNNING FETCH: ", err);

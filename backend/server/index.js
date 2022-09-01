@@ -62,8 +62,7 @@ app.listen(process.env.PORT);
 console.log(`Listening at http://localhost:${process.env.PORT}`);
 
 
-const cronStartString = "0 0 14 * * *";
-cron.schedule(cronStartString, () => {
+cron.schedule("0 59 13 * * *", () => {
   console.log("RUNNING findAndMakeReservations: ",  new Date());
   findAndMakeReservations({ runNow: false });
 });

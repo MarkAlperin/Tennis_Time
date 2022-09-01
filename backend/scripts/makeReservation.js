@@ -116,15 +116,12 @@ const makeReservation = async (
 
   cron.schedule(cronString, async () => {
     const startTime = performance.now();
-    console.log(`Inner CRON JOB RUNNING... ${Math.round(performance.now() - startTime)} ms\n`);
     await sendFetchToServer(resData, courtNum, cookieStr);
+    console.log(`Inner CRON JOB RUNNING...`);
     console.log(`FETCH COMPLETE... Execution time:  ${Math.round(performance.now() - startTime)} ms\n`);
 
     // SELECT DAY ********************************************************
-
-    console.log(`Timeout working ?... ${Math.round(performance.now() - startTime)} ms`);
-    await page.waitForTimeout(200).then(() => dates[day - dayModifier].click().catch((e) => errorRetry(e)));
-    console.log(`timeout working?... ${Math.round(performance.now() - startTime)} ms\n`);
+    await page.waitForTimeout(3000).then(() => dates[day - dayModifier].click().catch((e) => errorRetry(e)));
 
     // CONFIRM RESERVATION / SEND USER FEEDBACK / UPDATE DB ********************************************************
     console.log(`WAITING FOR SELECTOR... ${Math.round(performance.now() - startTime)} ms\n`);
@@ -173,26 +170,3 @@ const makeReservation = async (
 };
 
 module.exports = makeReservation;
-
-    // MAKE RES VIA PUPPETEER ********************************************************
-    // const { time } = resData;
-    // const court = resData.courts[courtNum];
-    // await page
-    //   .evaluate(
-    //     ({ court, time }) => {
-    //       this.Reserve(court, time);
-    //     },
-    //     { court, time }
-    //   )
-    //   .catch((e) => errorRetry(e));
-    // console.log("TIME SELECTED...");
-    // await page
-    //   .waitForSelector('select[id="Duration"]')
-    //   .catch((e) => errorRetry(e));
-    // await page.select('select[id="Duration"]', "2").catch((e) => errorRetry(e));
-    // await page
-    //   .type('input[id="Extended_Desc"]', "Tennis Time!")
-    //   .catch((e) => errorRetry(e));
-    // await page
-    //   .$eval('input[id="SaveReservation"]', (e) => e.click())
-    //   .catch((e) => errorRetry(e));
