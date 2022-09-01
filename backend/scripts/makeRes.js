@@ -7,7 +7,8 @@ const makeReservation = async (res, courtNum) => {
 
 
   const url = "https://sites.onlinecourtreservations.com/savereservation"
-  const body = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=${courtNum}&Start_Time=${res.time}&Duration=2&Reservation_Type=G&Extended_Desc=${res.desc ? res.desc : "Brought to you by Mark and Doobs"}`
+  const body = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=44&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=${courtNum}&Start_Time=${res.time}&Duration=2&Reservation_Type=G&Extended_Desc=`
+  const dody = "Reservation_Date=9%2F15%2F2022&Reservation_Num=&LastBlock=44&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=24&Duration=2&Extended_Desc="
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "accept-language": "en-US,en;q=0.9",
@@ -32,7 +33,9 @@ const makeReservation = async (res, courtNum) => {
     "method": "POST"
   };
 
-  console.log("options: ", options);
+  console.log(body);
+  console.log(dody);
+  console.log(body === dody)
 
 
 
@@ -55,7 +58,7 @@ const makeReservation = async (res, courtNum) => {
       "Referer": "https://sites.onlinecourtreservations.com/Reserve",
       "Referrer-Policy": "strict-origin-when-cross-origin"
     },
-    "body": body,
+    "body": "Reservation_Date=9%2F15%2F2022&Reservation_Num=&LastBlock=44&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=24&Duration=2&Extended_Desc=",
     "method": "POST"
   })
     .then(res => {
