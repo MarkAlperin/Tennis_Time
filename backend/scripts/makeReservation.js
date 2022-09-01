@@ -105,11 +105,13 @@ const makeReservation = async (
   console.log("SCHEDULING CRON JOB...");
 
   let cookies = await page.cookies();
-  console.log("cookies before: ", cookies)
-  cookies = cookies.filter(cookie => cookie.name.length > 10);
-  console.log("cookies after: ", cookies)
-  resData.sessionCookie = `${cookies[0].name}=${cookies[0].value}`;
-  console.log("resData.sessionCookie: ", resData.sessionCookie);
+  cookies = cookies.filter(cookie => cookie.name.length > 15);
+  console.log("cookies after filter: ", cookies)
+  console.log("resData.cookies")
+  resData.cookies = cookies.map(cookie => {
+    return `${cookie.name}=${cookie.value};`;
+  })
+  console.log("resData.cookies: ", resData.cookies);
   makeRes(resData, courtNum)
   // if (resData.error) {
   //   const date = new Date();
