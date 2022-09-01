@@ -65,7 +65,7 @@ const cancelReservation = async (
           // } else {
             //   console.log("TWILIO CLIENT FAILED...\n")
             // }
-            await browser.close();
+            //await browser.close();
           }
         };
 
