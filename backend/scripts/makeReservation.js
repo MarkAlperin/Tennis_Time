@@ -105,9 +105,8 @@ const makeReservation = async (
   console.log("SCHEDULING CRON JOB...");
 
   let cookies = await page.cookies();
-  cookies = cookies.filter(cookie => cookie.name.length > 15);
-  console.log("cookies after filter: ", cookies)
-  console.log("resData.cookies")
+  // cookies = cookies.filter(cookie => cookie.name.length > 15);
+
   resData.cookies = cookies.map(cookie => {
     return `${cookie.name}=${cookie.value};`;
   })

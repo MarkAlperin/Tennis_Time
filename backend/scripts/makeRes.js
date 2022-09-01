@@ -11,7 +11,7 @@ const makeReservation = async (res, courtNum) => {
   const dody = "Reservation_Date=9%2F15%2F2022&Reservation_Num=&LastBlock=44&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=24&Duration=2&Extended_Desc="
   const cookies = `device=PC; facility%5Fnum=${res.facility}; user%5Fid=randi%2Ehedberg; ${res.cookies.join(" ")}`;
   const dookies = "device=PC; facility%5Fnum=25; user%5Fid=randi%2Ehedberg; ASPSESSIONIDSGCRCQSC=MEPLFBHDJEELHBGAKCEKLHHL; ASPSESSIONIDCUBSBSQB=GCLNDNDAAHIGOEDOAEMDAMPL";
-
+  const sookies = `${res.cookies.join(" ")}`;
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "accept-language": "en-US,en;q=0.9",
@@ -39,9 +39,10 @@ const makeReservation = async (res, courtNum) => {
   console.log(body);
   console.log(dody);
   console.log(body === dody)
-  console.log(cookies)
+  console.log(cookies);
+  console.log(sookies);
   console.log(dookies);
-  console.log("length matches: ", cookies.length === dookies.length);
+
 
 
 
@@ -60,7 +61,7 @@ const makeReservation = async (res, courtNum) => {
       "sec-fetch-site": "same-origin",
       "sec-fetch-user": "?1",
       "upgrade-insecure-requests": "1",
-      "cookie": cookies,
+      "cookie": sookies,
       "Referer": "https://sites.onlinecourtreservations.com/Reserve",
       "Referrer-Policy": "strict-origin-when-cross-origin"
     },
