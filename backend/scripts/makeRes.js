@@ -6,7 +6,6 @@ const makeReservation = async (res, courtNum) => {
 
   const url = "https://sites.onlinecourtreservations.com/savereservation"
   const body = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=46&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=${courtNum}&Start_Time=${res.time}&Duration=2&Reservation_Type=G&Extended_Desc=${res.desc ? res.desc : ""}`
-  const options = {"body": body, "method": "POST"};
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "accept-language": "en-US,en;q=0.9",
@@ -25,12 +24,18 @@ const makeReservation = async (res, courtNum) => {
     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   }
+  const options = {
+    headers,
+    body,
+    method: "POST"
+  };
+
   console.log("url: ", url);
   console.log("options: ", options);
-  console.log("headers: ", headers);
 
 
-  fetch(url, headers, options)
+
+  fetch(url, options)
     .then(res => {
       console.log("RAN FETCH...");
     }).catch(err => {
