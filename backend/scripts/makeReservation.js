@@ -115,12 +115,10 @@ const makeReservation = async (
   }
 
   cron.schedule(cronString, async () => {
-
-    console.log("Inner CRON JOB RUNNING...");
     const startTime = performance.now();
-    const res = await sendFetchToServer(resData, courtNum, cookieStr);
+    console.log(`Inner CRON JOB RUNNING... ${Math.round(performance.now() - startTime)} ms`);
+    await sendFetchToServer(resData, courtNum, cookieStr);
     console.log(`FETCH COMPLETE... Execution time:  ${Math.round(performance.now() - startTime)} ms`);
-    console.log("Fetch Response: ", res);
 
     // SELECT DAY ********************************************************
     dates[day - dayModifier].click().catch((e) => errorRetry(e));
@@ -130,6 +128,7 @@ const makeReservation = async (
     console.log("DATE SELECTED...");
 
     // CONFIRM RESERVATION / SEND USER FEEDBACK / UPDATE DB ********************************************************
+    console.log(`WAITING FOR SELECTOR... ${Math.round(performance.now() - startTime)} ms`);
     await page.waitForSelector('td[class="G pointer"]')
     .then(() => {
       console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...", logString);
