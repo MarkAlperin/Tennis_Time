@@ -25,7 +25,7 @@ const findAndMakeReservations = async (options) => {
       resData.cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
       resData.error = false;
       console.log("resDAta: ", resData);
-      for (let courtNum = 0; courtNum < 1; courtNum++) {
+      for (let courtNum = 1; courtNum <= 1; courtNum++) {
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
         console.log("RUNNING makeReservation() for: ", logString);
         // makeReservation(resData, courtNum, twilioClient, Reservations, logString);
