@@ -121,11 +121,15 @@ const makeReservation = async (
     console.log(`FETCH COMPLETE... Execution time:  ${Math.round(performance.now() - startTime)} ms`);
 
     // SELECT DAY ********************************************************
-    dates[day - dayModifier].click().catch((e) => errorRetry(e));
-    await page
-      .waitForSelector('td[class="open pointer"]')
-      .catch((e) => errorRetry(e));
-    console.log("DATE SELECTED...");
+
+    console.log(`Timeout working ?... ${Math.round(performance.now() - startTime)} ms`);
+    const awaitTimeout = (delay) =>
+      new Promise(resolve => setTimeout(resolve, delay));
+
+    await awaitTimeout(300).then(() => {
+      dates[day - dayModifier].click().catch((e) => errorRetry(e));
+    });
+    console.log(`timeout working?... ${Math.round(performance.now() - startTime)} ms`);
 
     // CONFIRM RESERVATION / SEND USER FEEDBACK / UPDATE DB ********************************************************
     console.log(`WAITING FOR SELECTOR... ${Math.round(performance.now() - startTime)} ms`);
