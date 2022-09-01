@@ -17,7 +17,7 @@ const makeReservation = async (
   logString,
 ) => {
   const inPositionTime = performance.now();
-  console.log("makeReservation() RUNNING...", logString);
+  console.log("makeReservation() RUNNING...\n\n", logString);
   puppetAttempts++;
 
   // LAUNCH PAGE ***************************************************************
@@ -31,14 +31,14 @@ const makeReservation = async (
 
   // PUPPETTER ERROR HANDLER ***************************************************
   const errorRetry = async (err) => {
-    console.log("ERROR: Executing errorRety()...", logString);
+    console.log("ERROR: Executing errorRety()...\n\n", logString);
     if (2 > puppetAttempts) {
       await browser.close();
       resData.error = true;
       makeReservation(resData);
     } else {
       console.error(err.message);
-      console.log("Too many puppeteer errors. Exiting...", logString);
+      console.log("Too many puppeteer errors. Exiting...\n\n", logString);
       if (twilioClient) {
           twilioClient.messages
           .create({
@@ -47,7 +47,7 @@ const makeReservation = async (
             to: process.env.TWILIO_TO_NUMBER,
           });
       } else {
-        console.log("TWILIO CLIENT FAILED...")
+        console.log("TWILIO CLIENT FAILED...\n\n")
       }
       await browser.close();
     }
@@ -65,7 +65,7 @@ const makeReservation = async (
     .$eval('a[href="SignIn"]', (el) => el.click())
     .catch((e) => errorRetry(e));
   await page.waitForSelector('input[id="user_id"]').catch((e) => errorRetry(e));
-  console.log("Signing in...", process.env.USERNAME);
+  console.log("Signing in...\n\n", process.env.USERNAME);
   await page
     .type('input[id="user_id"]', process.env.USERNAME)
     .catch((e) => errorRetry(e));
@@ -91,7 +91,7 @@ const makeReservation = async (
       .click('span[class="ui-icon ui-icon-circle-triangle-e"]')
       .catch((e) => errorRetry(e));
   }
-  await page.waitForTimeout(200).then(() => console.log("WAITED FOR 200ms"));
+  await page.waitForTimeout(200).then(() => console.log("WAITED FOR 200ms\n\n"));
   await page
     .waitForSelector('a[class="ui-state-default"]')
     .catch((e) => errorRetry(e));
@@ -107,7 +107,7 @@ const makeReservation = async (
 
   // SCHEDULE CRON JOB ********************************************************
   console.log(`IN POSITION... TIME: ${Math.round(performance.now() - inPositionTime)}ms`);
-  console.log("SCHEDULING CRON JOB...");
+  console.log("SCHEDULING CRON JOB...\n\n");
 
   if (resData.error) {
     const date = new Date();
@@ -116,26 +116,21 @@ const makeReservation = async (
 
   cron.schedule(cronString, async () => {
     const startTime = performance.now();
-    console.log(`Inner CRON JOB RUNNING... ${Math.round(performance.now() - startTime)} ms`);
+    console.log(`Inner CRON JOB RUNNING... ${Math.round(performance.now() - startTime)} ms\n\n`);
     await sendFetchToServer(resData, courtNum, cookieStr);
-    console.log(`FETCH COMPLETE... Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+    console.log(`FETCH COMPLETE... Execution time:  ${Math.round(performance.now() - startTime)} ms\n\n`);
 
     // SELECT DAY ********************************************************
 
     console.log(`Timeout working ?... ${Math.round(performance.now() - startTime)} ms`);
-    const awaitTimeout = (delay) =>
-      new Promise(resolve => setTimeout(resolve, delay));
-
-    await awaitTimeout(300).then(() => {
-      dates[day - dayModifier].click().catch((e) => errorRetry(e));
-    });
-    console.log(`timeout working?... ${Math.round(performance.now() - startTime)} ms`);
+    await page.waitForTimeout(200).then(() => dates[day - dayModifier].click().catch((e) => errorRetry(e)));
+    console.log(`timeout working?... ${Math.round(performance.now() - startTime)} ms\n\n`);
 
     // CONFIRM RESERVATION / SEND USER FEEDBACK / UPDATE DB ********************************************************
-    console.log(`WAITING FOR SELECTOR... ${Math.round(performance.now() - startTime)} ms`);
+    console.log(`WAITING FOR SELECTOR... ${Math.round(performance.now() - startTime)} ms\n\n`);
     await page.waitForSelector('td[class="G pointer"]')
     .then(() => {
-      console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...", logString);
+      console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...\n\n", logString);
       if (twilioClient) {
         twilioClient.messages.create({
         body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}! 🎾🎾🎾`,
@@ -143,7 +138,7 @@ const makeReservation = async (
         to: process.env.TWILIO_TO_NUMBER,
       });
       } else {
-        console.log("TWILIO CLIENT FAILED...");
+        console.log("TWILIO CLIENT FAILED...\n\n");
       }
     Reservations.findByIdAndUpdate(resData._id, {
       $set: { isReserved: true, isAttempted: true },
@@ -156,7 +151,7 @@ const makeReservation = async (
       });
     }).catch( async (e) => {
       console.error(e);
-      console.log("ERROR: G POINTER NOT FOUND ",  logString);
+      console.log("ERROR: G POINTER NOT FOUND\n\n",  logString);
 
       Reservations.findByIdAndUpdate(resData._id, {
         $set: { isAttempted: true },
@@ -170,10 +165,10 @@ const makeReservation = async (
 
       // CLOSING BROWSER ********************************************************
       await browser.close();
-      console.log(`Failed ${logString}, closing browser... Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+      console.log(`Failed ${logString}, closing browser... Execution time:  ${Math.round(performance.now() - startTime)} ms\n\n`);
     });
     await browser.close();
-    console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+    console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms\n\n`);
   })
 };
 
