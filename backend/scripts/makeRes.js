@@ -7,7 +7,7 @@ const makeReservation = async (res, courtNum) => {
 
 
   const url = "https://sites.onlinecourtreservations.com/savereservation"
-  const body = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=44&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=${courtNum}&Start_Time=${res.time}&Duration=2&Extended_Desc=`
+  const body = `Reservation_Date=${dateStrings[0]}%2F${dateStrings[1]}%2F${dateStrings[2]}&Reservation_Num=&LastBlock=44&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=${res.courts[courtNum]}&Start_Time=${res.time}&Duration=2&Extended_Desc=`
   const dody = "Reservation_Date=9%2F15%2F2022&Reservation_Num=&LastBlock=44&Mode=New&From=Reservations&Player_1=RANDI.HEDBERG&Court_Num=1&Start_Time=24&Duration=2&Extended_Desc="
   const headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
