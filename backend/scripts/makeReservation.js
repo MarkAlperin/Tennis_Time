@@ -2,7 +2,7 @@
 const puppeteer = require("puppeteer");
 const cron = require("node-cron");
 const path = require("path");
-const makeRes=require("./makeRes");
+const sendFetchToServer = require("./sendFetchToServer");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 
@@ -13,6 +13,7 @@ const makeReservation = async (
   courtNum,
   twilioClient,
   Reservations,
+  cronString,
   logString,
 ) => {
   const inPositionTime = performance.now();
@@ -38,12 +39,16 @@ const makeReservation = async (
     } else {
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...", logString);
-      twilioClient.messages
-        .create({
-          body: `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`,
-          from: process.env.TWILIO_FROM_NUMBER,
-          to: process.env.TWILIO_TO_NUMBER,
-        });
+      if (twilioClient) {
+          twilioClient.messages
+          .create({
+            body: `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`,
+            from: process.env.TWILIO_FROM_NUMBER,
+            to: process.env.TWILIO_TO_NUMBER,
+          });
+      } else {
+        console.log("TWILIO CLIENT FAILED...")
+      }
       await browser.close();
     }
   };
@@ -96,98 +101,100 @@ const makeReservation = async (
   const day = resData.day;
   const dayModifier = currentMonth === resData.month ? 2 : 1;
 
+  // COLLECT COOKIES ********************************************************
+  let cookies = await page.cookies();
+  const cookieStr = cookies.map(cookie => `${cookie.name}=${cookie.value};`).join(" ")
+
   // SCHEDULE CRON JOB ********************************************************
-  console.log(
-    "inPositionTime: ",
-    Math.round(performance.now() - inPositionTime),
-    " ms"
-  );
+  console.log(`IN POSITION... TIME: ${Math.round(performance.now() - inPositionTime)}ms`);
   console.log("SCHEDULING CRON JOB...");
 
-  let cookies = await page.cookies();
-  // cookies = cookies.filter(cookie => cookie.name.length > 15);
+  if (resData.error) {
+    const date = new Date();
+    cronString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${date.getMonth() + 1} * `;
+  }
 
-  resData.cookies = cookies.map(cookie => {
-    return `${cookie.name}=${cookie.value};`;
+  cron.schedule(cronString, async () => {
+
+    console.log("Inner CRON JOB RUNNING...");
+    const startTime = performance.now();
+    const res = await sendFetchToServer(resData, courtNum, cookieStr);
+    console.log(`FETCH COMPLETE... Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+    console.log("Fetch Response: ", res);
+
+    // SELECT DAY ********************************************************
+    dates[day - dayModifier].click().catch((e) => errorRetry(e));
+    await page
+      .waitForSelector('td[class="open pointer"]')
+      .catch((e) => errorRetry(e));
+    console.log("DATE SELECTED...");
+
+    // CONFIRM RESERVATION / SEND USER FEEDBACK / UPDATE DB ********************************************************
+    await page.waitForSelector('td[class="G pointer"]')
+    .then(() => {
+      console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...", logString);
+      if (twilioClient) {
+        twilioClient.messages.create({
+        body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}! 🎾🎾🎾`,
+        from: process.env.TWILIO_FROM_NUMBER,
+        to: process.env.TWILIO_TO_NUMBER,
+      });
+      } else {
+        console.log("TWILIO CLIENT FAILED...");
+      }
+    Reservations.findByIdAndUpdate(resData._id, {
+      $set: { isReserved: true, isAttempted: true },
+      }).exec((err, data) => {
+        if (!err) {
+          console.log("UPDATED RESERVATION: ", data);
+        } else {
+          console.log("ERROR UPDATING RESERVATION: ", err);
+        }
+      });
+    }).catch( async (e) => {
+      console.error(e);
+      console.log("ERROR: G POINTER NOT FOUND ",  logString);
+
+      Reservations.findByIdAndUpdate(resData._id, {
+        $set: { isAttempted: true },
+      }).exec((err, data) => {
+        if (!err) {
+          console.log("UPDATED FAILED RESERVATION: ", data);
+        } else {
+          console.log("ERROR UPDATING FAILED RESERVATION: ", err);
+        }
+      });
+
+      // CLOSING BROWSER ********************************************************
+      await browser.close();
+      console.log(`Failed ${logString}, closing browser... Execution time:  ${Math.round(performance.now() - startTime)} ms`);
+    });
+    await browser.close();
+    console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
   })
-  console.log("resData.cookies: ", resData.cookies);
-  makeRes(resData, courtNum)
-  // if (resData.error) {
-  //   const date = new Date();
-  //   resData.cronString = `${
-  //     date.getSeconds() + 1
-  //   } ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${
-  //     date.getMonth() + 1
-  //   } * `;
-  // }
-
-  // cron.schedule(resData.cronString, async () => {
-  //   console.log("Inner CRON JOB RUNNING...");
-  //   const startTime = performance.now();
-  //   dates[day - dayModifier].click().catch((e) => errorRetry(e));
-  //   await page
-  //     .waitForSelector('td[class="open pointer"]')
-  //     .catch((e) => errorRetry(e));
-  //   console.log("DATE SELECTED...");
-
-  //   const { time } = resData;
-  //   const court = resData.courts[courtNum];
-  //   await page
-  //     .evaluate(
-  //       ({ court, time }) => {
-  //         this.Reserve(court, time);
-  //       },
-  //       { court, time }
-  //     )
-  //     .catch((e) => errorRetry(e));
-  //   console.log("TIME SELECTED...");
-  //   await page
-  //     .waitForSelector('select[id="Duration"]')
-  //     .catch((e) => errorRetry(e));
-  //   await page.select('select[id="Duration"]', "2").catch((e) => errorRetry(e));
-  //   await page
-  //     .type('input[id="Extended_Desc"]', "Tennis Time!")
-  //     .catch((e) => errorRetry(e));
-  //   await page
-  //     .$eval('input[id="SaveReservation"]', (e) => e.click())
-  //     .catch((e) => errorRetry(e));
-
-  //   await page.waitForSelector('td[class="G pointer"]')
-  //   .then(() => {
-  //     console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...", logString);
-  //     twilioClient.messages.create({
-  //     body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}! 🎾🎾🎾`,
-  //     from: process.env.TWILIO_FROM_NUMBER,
-  //     to: process.env.TWILIO_TO_NUMBER,
-  //   });
-  //   Reservations.findByIdAndUpdate(resData._id, {
-  //     $set: { isReserved: true, isAttempted: true },
-  //   }).exec((err, data) => {
-  //     if (!err) {
-  //       console.log("UPDATED RESERVATION: ", data);
-  //     } else {
-  //       console.log("ERROR UPDATING RESERVATION: ", err);
-  //     }
-  //   });
-  // }).catch( async (e) => {
-  //     console.error(e);
-  //     console.log("ERROR: G POINTER NOT FOUND ",  logString);
-
-  //     Reservations.findByIdAndUpdate(resData._id, {
-  //       $set: { isAttempted: true },
-  //     }).exec((err, data) => {
-  //       if (!err) {
-  //         console.log("UPDATED FAILED RESERVATION: ", data);
-  //       } else {
-  //         console.log("ERROR UPDATING FAILED RESERVATION: ", err);
-  //       }
-  //     });
-  //     await browser.close();
-  //     console.log(`Failed ${logString}, closing browser... Execution time:  ${Math.round(performance.now() - startTime)} ms`);
-  //   });
-  //   await browser.close();
-  //   console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms`);
-  // })
 };
 
 module.exports = makeReservation;
+
+    // MAKE RES VIA PUPPETEER ********************************************************
+    // const { time } = resData;
+    // const court = resData.courts[courtNum];
+    // await page
+    //   .evaluate(
+    //     ({ court, time }) => {
+    //       this.Reserve(court, time);
+    //     },
+    //     { court, time }
+    //   )
+    //   .catch((e) => errorRetry(e));
+    // console.log("TIME SELECTED...");
+    // await page
+    //   .waitForSelector('select[id="Duration"]')
+    //   .catch((e) => errorRetry(e));
+    // await page.select('select[id="Duration"]', "2").catch((e) => errorRetry(e));
+    // await page
+    //   .type('input[id="Extended_Desc"]', "Tennis Time!")
+    //   .catch((e) => errorRetry(e));
+    // await page
+    //   .$eval('input[id="SaveReservation"]', (e) => e.click())
+    //   .catch((e) => errorRetry(e));
