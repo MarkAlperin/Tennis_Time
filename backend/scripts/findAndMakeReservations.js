@@ -23,25 +23,25 @@ const findAndMakeReservations = async (options) => {
     const reservationWindowDays = 14.509;
 
     if (!resData.isReserved && diffDays <= reservationWindowDays) {
-      let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
+      let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 15 14 * * *";
       resData.error = false;
-      console.log("resDAta: ", resData);
+      console.log("resData: ", resData);
       for (let courtNum = 0; courtNum < 1; courtNum++) {
 
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
-        console.log("RUNNING makeReservation() for: ", logString);
+        console.log("RUNNING makeReservation() for: ", logString, "\n");
         makeReservation(resData, courtNum, twilioClient, Reservations, cronString, logString);
       }
-      cron.schedule("0 2 14 * * *", async () => {
-        let resCheck = await Reservations.findById(resData._id);
-        if (!resCheck.isReserved) {
-          twilioClient.messages.create({
-            body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`,
-            from: process.env.TWILIO_FROM_NUMBER,
-            to: process.env.TWILIO_TO_NUMBER,
-          });
-        }
-      });
+      // cron.schedule("0 16 14 * * *", async () => {
+      //   let resCheck = await Reservations.findById(resData._id);
+      //   if (!resCheck.isReserved) {
+      //     twilioClient.messages.create({
+      //       body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`,
+      //       from: process.env.TWILIO_FROM_NUMBER,
+      //       to: process.env.TWILIO_TO_NUMBER,
+      //     });
+      //   }
+      // });
     } else if (new Date(resData.date) - date < 0) {
       Reservations.findByIdAndDelete(resData._id);
     }
