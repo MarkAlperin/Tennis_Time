@@ -62,7 +62,7 @@ app.listen(process.env.PORT);
 console.log(`Listening at http://localhost:${process.env.PORT}`);
 
 
-cron.schedule("0 14 14 * * *", () => {
+cron.schedule("0 17 14 * * *", () => {
   console.log("RUNNING findAndMakeReservations: ",  new Date());
   findAndMakeReservations({ runNow: false });
 });
