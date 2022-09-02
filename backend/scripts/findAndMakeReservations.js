@@ -22,8 +22,8 @@ const findAndMakeReservations = async (options) => {
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
     const reservationWindowDays = 14.509;
 
-    if (!resData.isReserved && diffDays <= reservationWindowDays) {
-      let cronString = runNow ? helpers.makeCronString(date, runNow) : "30 17 14 * * *";
+    if (!resData.isAttempted && !resData.isReserved && diffDays <= reservationWindowDays) {
+      let cronString = runNow ? helpers.makeCronString(date, runNow) : "30 21 14 * * *";
       resData.error = false;
       console.log("resData: ", resData);
       for (let courtNum = 0; courtNum < 1; courtNum++) {
