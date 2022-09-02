@@ -125,9 +125,19 @@ const cancelReservation = async (
 
     // CANCEL RESERVATION ********************************************************
     await page.waitForSelector('td[class="G pointer"]')
-    await page.$eval('td[class="G pointer"]', e => e.click());
+    await page.click('td[class="G pointer"]');
+    console.log("found g pointer")
+    await page.waitForSelector('input[id="CancelReservation"]').then(() => console.log("found cancel res button"))
+    await page.waitForTimeout(1000, () => console.log("waited 1000ms"))
+    // await page.click('input[id="SaveReservation"]').then(() => console.log("clicked cancel res button"))
 
-
+    page.on('dialog', async dialog => {
+      //get alert message
+      console.log(dialog.message());
+      //accept alert
+      await dialog.accept();
+    })
+    await page.click('input[id="CancelReservation"]').then(() => console.log("clicked cancel res button"))
     // Reservations.findByIdAndUpdate(resData._id).exec((err, data) => {
     //     if (!err) {
     //       console.log("UPDATED RESERVATION: ", data);
@@ -142,7 +152,7 @@ const cancelReservation = async (
       // // CLOSING BROWSER ********************************************************
       // await browser.close();
 
-    await browser.close();
+   // await browser.close();
 
 
 };
