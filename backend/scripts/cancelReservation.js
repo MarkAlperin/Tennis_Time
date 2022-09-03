@@ -138,6 +138,8 @@ const cancelReservation = async (
       await dialog.accept();
     })
     await page.click('input[id="CancelReservation"]').then(() => console.log("clicked cancel res button"))
+
+    await page.waitForSelector('td[class="open pointer"]').then(() => console.log("confirmed open pointer"))
     // Reservations.findByIdAndUpdate(resData._id).exec((err, data) => {
     //     if (!err) {
     //       console.log("UPDATED RESERVATION: ", data);
