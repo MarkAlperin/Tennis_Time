@@ -44,7 +44,7 @@ const makeReservation = async (
           .create({
             body: `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`,
             from: process.env.TWILIO_FROM_NUMBER,
-            to: process.env.TWILIO_TO_NUMBER,
+            to: process.env.TWILIO_DEV_NUMBER,
           });
       } else {
         console.log("TWILIO CLIENT FAILED...\n")
