@@ -14,6 +14,22 @@ const makeCronString = (date, runNow) => {
   return cronString;
 };
 
+const textUsers = (twilioClient, phoneNums, fromNum, body) => {
+  Promise.all(
+    phoneNums.map((phoneNum) => {
+      return twilioClient.messages.create({
+        to: phoneNum,
+        from: fromNum,
+        body: body,
+      });
+    })
+)
+  .then((messages) => {
+    console.log("Messages sent!");
+  })
+  .catch((err) => console.error(err));
+};
+
 const getMethods = (obj) => {
   let properties = new Set();
   let currentObj = obj;
@@ -58,4 +74,5 @@ module.exports = {
   makeCronString,
   getMethods,
   months,
+  textUsers,
 };

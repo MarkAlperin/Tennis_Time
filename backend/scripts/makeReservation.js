@@ -3,6 +3,7 @@ const puppeteer = require("puppeteer");
 const cron = require("node-cron");
 const path = require("path");
 const sendFetchToServer = require("./sendFetchToServer");
+const helpers = require("../helpers/helpers")
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 
@@ -40,14 +41,7 @@ const makeReservation = async (
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...\n", logString);
       if (twilioClient) {
-          twilioClient.messages
-          .create({
-            body: `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`,
-            from: process.env.TWILIO_FROM_NUMBER,
-            to: process.env.TWILIO_DEV_NUMBER,
-          });
-      } else {
-        console.log("TWILIO CLIENT FAILED...\n")
+        helpers.textUsers(twilioClient, [process.env.TWILIO_DEV_NUMBER], process.env.TWILIO_FROM_NUMBER, `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`);
       }
       await browser.close();
     }
@@ -129,11 +123,9 @@ const makeReservation = async (
     .then(() => {
       console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...\n", logString);
       if (twilioClient) {
-        twilioClient.messages.create({
-        body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}! 🎾🎾🎾`,
-        from: process.env.TWILIO_FROM_NUMBER,
-        to: process.env.TWILIO_TO_NUMBER,
-      });
+        const phoneNums = [process.env.TWILIO_DEV_NUMBER, process.env.TWILIO_TO_NUMBER];
+        const body = `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}! 🎾🎾🎾`;
+        helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
       } else {
         console.log("TWILIO CLIENT FAILED...\n");
       }
@@ -170,3 +162,18 @@ const makeReservation = async (
 };
 
 module.exports = makeReservation;
+
+      //     twilioClient.messages
+      //     .create({
+      //       body: `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`,
+      //       from: process.env.TWILIO_FROM_NUMBER,
+      //       to: process.env.TWILIO_DEV_NUMBER,
+      //     });
+      // } else {
+      //   console.log("TWILIO CLIENT FAILED...\n")
+
+      //   twilioClient.messages.create({
+      //   body: `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}! 🎾🎾🎾`,
+      //   from: process.env.TWILIO_FROM_NUMBER,
+      //   to: process.env.TWILIO_TO_NUMBER,
+      // });

@@ -32,14 +32,14 @@ const findAndMakeReservations = async (options) => {
         console.log("RUNNING makeReservation() for: ", logString, "\n");
         makeReservation(resData, courtNum, twilioClient, Reservations, cronString, logString);
       }
+      console.log("SCHEDULING CRON UNSUCCESSFUL CHECK")
       cron.schedule("0 2 14 * * *", async () => {
+        console.log("CRON UNSUCCESSFUL CHECK RUNNING...")
         let resCheck = await Reservations.findById(resData._id);
         if (!resCheck.isReserved) {
-          twilioClient.messages.create({
-            body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`,
-            from: process.env.TWILIO_FROM_NUMBER,
-            to: process.env.TWILIO_TO_NUMBER,
-          });
+          const phoneNums = [process.env.TWILIO_TO_NUMBER, process.env.TWILIO_DEV_NUMBER];
+          const body = `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`;
+          helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
         }
       });
     } else if (new Date(resData.date) - date < 0) {
@@ -49,3 +49,9 @@ const findAndMakeReservations = async (options) => {
 };
 
 module.exports = findAndMakeReservations;
+
+          // twilioClient.messages.create({
+          //   body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`,
+          //   from: process.env.TWILIO_FROM_NUMBER,
+          //   to: process.env.TWILIO_TO_NUMBER,
+          // });
