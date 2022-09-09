@@ -20,7 +20,7 @@ const sendFetchToServer = async (res, courtsIdx, cookieStr) => {
     "sec-fetch-site": "same-origin",
     "sec-fetch-user": "?1",
     "upgrade-insecure-requests": "1",
-    "cookie": `device=PC; facility%5Fnum=${res.game === "Tennis" ? "25" : "88"}; user%5Fid=randi%2Ehedberg; ASPSESSIONIDQGBCDCRC=BDLOGCGBPKAAANHALFPCGDFB`,
+    "cookie": cookieStr || `device=PC; facility%5Fnum=${res.game === "Tennis" ? "25" : "88"}; user%5Fid=randi%2Ehedberg; ASPSESSIONIDQGBCDCRC=BDLOGCGBPKAAANHALFPCGDFB`,
     "Referer": "https://sites.onlinecourtreservations.com/Reserve",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   }

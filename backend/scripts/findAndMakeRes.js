@@ -62,7 +62,7 @@ const findAndMakeRes = async (options) => {
 
             const phoneNums = [process.env.TWILIO_TO_NUMBER, process.env.TWILIO_DEV_NUMBER];
             const body = `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]} as been requested. Awaiting confirmation...`;
-            helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUM, body);
+            helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
         });
 
           //confirmRes(resData, courtNum, twilioClient, Reservations, cronString, logString);
