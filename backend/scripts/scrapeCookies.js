@@ -7,10 +7,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 let puppetAttempts = 0;
 
-const scrapeCookies = async (
-  resData,
-  twilioClient,
-) => {
+const scrapeCookies = async (resData, twilioClient) => {
   console.log("scrapeCookies() RUNNING...");
   puppetAttempts++;
 
@@ -22,6 +19,7 @@ const scrapeCookies = async (
   });
   const page = await browser.newPage();
 
+  // SET PAGE TIMEOUT VALUES ***************************************************
   const timeoutValue = 1000 * 60 * 2;
   page.setDefaultNavigationTimeout(timeoutValue);
   page.setDefaultTimeout(timeoutValue);

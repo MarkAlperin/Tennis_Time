@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 
 mongoose
-// .connect(process.env.CONNECT_STRING)
+  // .connect(process.env.CONNECT_STRING)
   // .connect(
   //   `mongodb://${process.env.USER}:${process.env.PASSWORD}@${process.env.DB_URL}:${process.env.DB_PORT}/?authMechanism=SCRAM-SHA-256`,
   //   { dbName: `${process.env.DB_NAME}` }
@@ -25,4 +25,15 @@ let reservationsSchema = new mongoose.Schema({
   isAttempted: Boolean,
 });
 
-module.exports = mongoose.model("Reservations", reservationsSchema);
+let cookiesSchema = new mongoose.Schema({
+  date: Date,
+  cookieStr: String,
+});
+
+const reservations = mongoose.model("Reservations", reservationsSchema);
+const cookies = mongoose.model("Cookies", cookiesSchema);
+
+module.exports = {
+  reservations,
+  cookies,
+};

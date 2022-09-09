@@ -14,6 +14,13 @@ const makeCronString = (date, runNow) => {
   return cronString;
 };
 
+const confirmWindow = (resData, date) => {
+  const diffTime = Math.abs(new Date(resData.date) - date);
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  const reservationWindowDays = 14.509;
+  return (!resData.isReserved && diffDays <= reservationWindowDays);
+}
+
 const textUsers = (twilioClient, phoneNums, fromNum, body) => {
   Promise.all(
     phoneNums.map((phoneNum) => {
@@ -76,4 +83,5 @@ module.exports = {
   getMethods,
   months,
   textUsers,
+  confirmWindow
 };

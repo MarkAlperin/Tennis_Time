@@ -5,7 +5,7 @@ const cors = require("cors");
 const cron = require("node-cron");
 
 const Reservations = require("../db/index.js");
-const findAndMakeReservations = require("../scripts/findAndMakeRes.js");
+const findAndMakeRes = require("../scripts/findAndMakeRes.js");
 
 const app = express();
 
@@ -64,6 +64,6 @@ console.log(`Listening at http://localhost:${process.env.PORT}`);
 const date = new Date();
 let cronStartString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${(date.getMonth() + 1)} * `;
 cron.schedule(cronStartString, () => {
-  console.log("RUNNING findAndMakeReservations: ",  new Date() - (1000 * 60 * 60 * 5));
-  findAndMakeReservations({runNow: true});
+  console.log("RUNNING findAndMakeReservations: ",  new Date());
+  findAndMakeRes({runNow: true});
 })

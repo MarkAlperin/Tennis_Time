@@ -7,25 +7,37 @@ const twilioClient = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWIL
 
 const confirmRes = require("./confirmRes");
 const scrapeCookies = require("./scrapeCookies")
-const Reservations = require("../db/index.js");
+const DB = require("../db/index.js");
 const helpers = require("../helpers/helpers");
 const sendFetchToServer = require("./sendFetchToServer");
 
-const findAndMakeReservations = async (options) => {
+const findAndMakeRes = async (options) => {
+  let cookieStr;
   const date = new Date();
   const { runNow } = options
   console.log("findAndMakeReservations() RUNNING...");
 
+  const reservations = await DB.reservations.find({}).sort({ date: -1 });
+  const impendingReservations = reservations.filter(res => (!res.isReserved && (helpers.confirmWindow(res, date))))
+  const expiredReservations = reservations.filter(res => new Date(res.date) - date < 0)
 
-  const reservations = await Reservations.find({}).sort({ date: -1 });
+  console.log("reservations: ", reservations);
+  console.log("impending: ", impendingReservations)
+  console.log("expired: ", expiredReservations)
 
-  for (let i = 0; i < reservations.length; i++) {
-    const resData = reservations[i];
-    const diffTime = Math.abs(new Date(resData.date) - date);
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-    const reservationWindowDays = 14.509;
+  // for (const res in expiredReservations) {
+  //   DB.reservations.findByIdAndDelete(res._id);
+  // }
 
-    if (!resData.isReserved && diffDays <= reservationWindowDays) {
+  if (impendingReservations.length) {
+    cookieStr = await scrapeCookies(impendingReservations[0], twilioClient)
+    console.log('RETURNED COOKIES: ', cookieStr)
+  }
+
+
+  for (let i = 0; i < impendingReservations.length; i++) {
+    const resData = impendingReservations[i];
+
       let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
       resData.error = false;
       console.log("resData: ", resData);
@@ -35,9 +47,8 @@ const findAndMakeReservations = async (options) => {
 
         console.log("cronstring: ", cronString)
         cron.schedule(cronString, async () => {
-          let cookieStr = await scrapeCookies(resData, twilioClient, logString)
-          console.log('RETURNED COOKIES: ', cookieStr)
-          //sendFetchToServer(resData, courtNum);
+
+          //sendFetchToServer(resData, courtNum, cookieStr);
 
           // Reservations.findByIdAndUpdate(resData._id, {
           //   $set: { isAttempted: true },
@@ -54,19 +65,11 @@ const findAndMakeReservations = async (options) => {
             helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUM, body);
         });
 
-          confirmRes(resData, courtNum, twilioClient, Reservations, cronString, logString);
+          //confirmRes(resData, courtNum, twilioClient, Reservations, cronString, logString);
       }
 
-    } else if (new Date(resData.date) - date < 0) {
-      Reservations.findByIdAndDelete(resData._id);
-    }
+
   }
 };
 
-module.exports = findAndMakeReservations;
-
-          // twilioClient.messages.create({
-          //   body: `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`,
-          //   from: process.env.TWILIO_FROM_NUMBER,
-          //   to: process.env.TWILIO_TO_NUMBER,
-          // });
+module.exports = findAndMakeRes;
