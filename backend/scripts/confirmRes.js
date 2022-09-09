@@ -109,22 +109,6 @@ const confirmRes = async (
     await page.waitForSelector('td[class="G pointer"]')
     .then(() => {
       console.log("FOUND G POINTER, TEXTING USER VIA TWILIO...\n", logString);
-      if (twilioClient) {
-        const phoneNums = [process.env.TWILIO_DEV_NUMBER, process.env.TWILIO_TO_NUMBER];
-        const body = `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}! 🎾🎾🎾`;
-        helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
-      } else {
-        console.log("FAILED, NO TWILIO CLIENT...\n");
-      }
-    Reservations.findByIdAndUpdate(resData._id, {
-      $set: { isReserved: true },
-      }).exec((err, data) => {
-        if (!err) {
-          console.log(`UPDATED RESERVATION ${logString} isReserved: true`);
-        } else {
-          console.log("ERROR UPDATING RESERVATION: ", err);
-        }
-      });
       isConfirmed = true;
     }).catch( async (e) => {
       //console.error(e);
