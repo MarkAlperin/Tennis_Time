@@ -9,14 +9,13 @@ let puppetAttempts = 0;
 
 const scrapeCookies = async (
   resData,
-  courtNum,
+
   twilioClient,
-  Reservations,
-  cronString,
+
   logString,
 ) => {
   const inPositionTime = performance.now();
-  console.log("makeReservation() RUNNING...\n", logString);
+  console.log("scrapeCookies() RUNNING...\n", logString);
   puppetAttempts++;
 
   // LAUNCH PAGE ***************************************************************
@@ -44,7 +43,7 @@ const scrapeCookies = async (
       console.log("Too many puppeteer errors. Exiting...\n", logString);
       if (twilioClient) {
         console.log("TEXTING TWILIO DEV...")
-        helpers.textUsers(twilioClient, [process.env.TWILIO_DEV_NUMBER], process.env.TWILIO_FROM_NUMBER, `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`);
+        helpers.textUsers(twilioClient, [process.env.TWILIO_DEV_NUMBER], process.env.TWILIO_FROM_NUMBER, `Your ${logString} scrapeCookies has failed. ERROR: ${err.message.slice(0, 50)}`);
       }
       await browser.close();
     }
