@@ -24,7 +24,6 @@ const confirmWindow = (resData, date) => {
 const textUsers = (twilioClient, phoneNums, fromNum, body) => {
   Promise.all(
     phoneNums.map((phoneNum) => {
-      console.log(phoneNum)
       return twilioClient.messages.create({
         to: phoneNum,
         from: fromNum,

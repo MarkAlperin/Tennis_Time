@@ -72,8 +72,6 @@ const scrapeCookies = async (resData, twilioClient) => {
 
     let cookies = await page.cookies();
     const cookieStr = cookies.map(cookie => `${cookie.name}=${cookie.value};`).join(" ")
-    console.log("cookieStr: ", cookieStr)
-
 
   // CLOSING BROWSER ********************************************************
       await browser.close();
