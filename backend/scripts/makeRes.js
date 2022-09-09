@@ -28,6 +28,7 @@ const makeReservation = async (
     ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
+
   const timeoutValue = 1000 * 60 * 2;
   page.setDefaultNavigationTimeout(timeoutValue);
   page.setDefaultTimeout(timeoutValue);
