@@ -4,7 +4,7 @@ const cron = require("node-cron");
 const path = require("path");
 const sendFetchToServer = require("./sendFetchToServer");
 const helpers = require("../helpers/helpers")
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 
 let puppetAttempts = 0;
@@ -23,12 +23,15 @@ const makeReservation = async (
 
   // LAUNCH PAGE ***************************************************************
   const browser = await puppeteer.launch({
-    executablePath: "/usr/bin/chromium-browser",
-    headless: true,
+    //executablePath: "/usr/bin/chromium-browser",
+    headless: false,
     ignoreHTTPSErrors: true,
   });
   const page = await browser.newPage();
-  await page.goto(process.env.SET_LOCATION_URL).catch((e) => errorRetry(e));
+  const timeoutValue = 1000 * 60 * 2;
+  page.setDefaultNavigationTimeout(timeoutValue);
+  page.setDefaultTimeout(timeoutValue);
+
 
   // PUPPETTER ERROR HANDLER ***************************************************
   const errorRetry = async (err) => {
@@ -41,6 +44,7 @@ const makeReservation = async (
       console.error(err.message);
       console.log("Too many puppeteer errors. Exiting...\n", logString);
       if (twilioClient) {
+        console.log("TEXTING TWILIO CLIENT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         helpers.textUsers(twilioClient, [process.env.TWILIO_DEV_NUMBER], process.env.TWILIO_FROM_NUMBER, `Your ${logString} reservation has failed. ERROR: ${err.message.slice(0, 50)}`);
       }
       await browser.close();
@@ -48,6 +52,7 @@ const makeReservation = async (
   };
 
   // SET LOCATION *************************************************************
+  await page.goto(process.env.SET_LOCATION_URL).catch((e) => errorRetry(e));
   await page
     .select("select#facility_num", resData.facility)
     .catch((e) => errorRetry(e));

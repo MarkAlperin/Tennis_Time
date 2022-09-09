@@ -5,7 +5,7 @@ const cors = require("cors");
 const cron = require("node-cron");
 
 const Reservations = require("../db/index.js");
-const findAndMakeReservations = require("../scripts/findAndMakeReservations.js");
+const findAndMakeReservations = require("../scripts/findAndMakeRes.js");
 
 const app = express();
 

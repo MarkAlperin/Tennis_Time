@@ -1,23 +1,25 @@
 const cron = require("node-cron");
 const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const twilio = require("twilio");
 const twilioClient = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
-const makeReservation = require("../scripts/makeReservation");
+const confirmRes = require("./confirmRes");
 const Reservations = require("../db/index.js");
 const helpers = require("../helpers/helpers");
+const sendFetchToServer = require("./sendFetchToServer");
 
 const findAndMakeReservations = async (options) => {
-  console.log("findAndMakeReservations() RUNNING...");
+  const date = new Date();
   const { runNow } = options
-  console.log("runNow: ", runNow);
+  console.log("findAndMakeReservations() RUNNING...");
+
+
   const reservations = await Reservations.find({}).sort({ date: -1 });
 
   for (let i = 0; i < reservations.length; i++) {
     const resData = reservations[i];
-    const date = new Date();
     const diffTime = Math.abs(new Date(resData.date) - date);
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
     const reservationWindowDays = 14.509;
@@ -27,21 +29,30 @@ const findAndMakeReservations = async (options) => {
       resData.error = false;
       console.log("resData: ", resData);
       for (let courtNum = 0; courtNum < 1; courtNum++) {
-
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
         console.log("RUNNING makeReservation() for: ", logString, "\n");
-        makeReservation(resData, courtNum, twilioClient, Reservations, cronString, logString);
+
+        cron.schedule(cronString, async () => {
+          sendFetchToServer(resData, courtNum);
+
+          Reservations.findByIdAndUpdate(resData._id, {
+            $set: { isAttempted: true },
+            }).exec((err, data) => {
+              if (!err) {
+                console.log("UPDATED RESERVATION: ", data);
+              } else {
+                console.log("ERROR UPDATING RESERVATION: ", err);
+              }
+            });
+
+            const phoneNums = [process.env.TWILIO_TO_NUMBER, process.env.TWILIO_DEV_NUMBER];
+            const body = `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]} as been requested. Awaiting confirmation...`;
+            helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUM, body);
+        });
+
+          confirmRes(resData, courtNum, twilioClient, Reservations, cronString, logString);
       }
-      console.log("SCHEDULING CRON UNSUCCESSFUL CHECK")
-      cron.schedule("0 2 14 * * *", async () => {
-        console.log("CRON UNSUCCESSFUL CHECK RUNNING...")
-        let resCheck = await Reservations.findById(resData._id);
-        if (!resCheck.isReserved) {
-          const phoneNums = [process.env.TWILIO_TO_NUMBER, process.env.TWILIO_DEV_NUMBER];
-          const body = `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} unsuccessful... ☹️`;
-          helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
-        }
-      });
+
     } else if (new Date(resData.date) - date < 0) {
       Reservations.findByIdAndDelete(resData._id);
     }
