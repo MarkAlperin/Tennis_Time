@@ -25,7 +25,7 @@ const findAndMakeRes = async (options) => {
 
 
 
-  for (const res in expiredReservations) {
+  for (const res of expiredReservations) {
     console.log("DELETE ", res.date)
     DB.reservations.findByIdAndDelete(res._id);
   }
