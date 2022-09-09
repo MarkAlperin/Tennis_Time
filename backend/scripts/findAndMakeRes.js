@@ -20,16 +20,14 @@ const findAndMakeRes = async (options) => {
   const reservations = await DB.reservations.find({}).sort({ date: -1 });
   const impendingReservations = reservations.filter(res => (!res.isReserved && (helpers.confirmWindow(res, date))))
   const expiredReservations = reservations.filter(res => new Date(res.date) - date < 0)
-
-  console.log("reservations: ", reservations);
   console.log("impending: ", impendingReservations)
-  console.log("expired: ", expiredReservations)
 
-  // for (const res in expiredReservations) {
-  //   DB.reservations.findByIdAndDelete(res._id);
-  // }
+  for (const res in expiredReservations) {
+    DB.reservations.findByIdAndDelete(res._id);
+  }
 
   if (impendingReservations.length) {
+    console.log("waiting for cookies?")
     cookieStr = await scrapeCookies(impendingReservations[0], twilioClient)
     console.log('RETURNED COOKIES: ', cookieStr)
   }
@@ -54,7 +52,7 @@ const findAndMakeRes = async (options) => {
             $set: { isAttempted: true },
             }).exec((err, data) => {
               if (!err) {
-                console.log("UPDATED RESERVATION isAttempted: ", data);
+                console.log("UPDATED RESERVATION isAttempted: ",JSON.stringify(data));
               } else {
                 console.log("ERROR UPDATING RESERVATION: ", err);
               }
@@ -65,7 +63,8 @@ const findAndMakeRes = async (options) => {
             helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
         });
 
-          //confirmRes(resData, courtNum, twilioClient, Reservations, cronString, logString);
+          const isConfirmed = await confirmRes(resData, courtNum, twilioClient, DB.reservations, cronString, logString);
+          console.log("isConfirmed: ", isConfirmed, logString)
       }
 
 

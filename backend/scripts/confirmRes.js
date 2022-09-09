@@ -2,7 +2,6 @@
 const puppeteer = require("puppeteer");
 const cron = require("node-cron");
 const path = require("path");
-const sendFetchToServer = require("./sendFetchToServer");
 const helpers = require("../helpers/helpers")
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
@@ -145,9 +144,12 @@ const confirmRes = async (
       // CLOSING BROWSER ********************************************************
       await browser.close();
       console.log(`Failed ${logString}, closing browser... Execution time:  ${Math.round(performance.now() - startTime)} ms\n`);
+      return false;
     });
     await browser.close();
     console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms\n`);
+    return true;
+
   })
 };
 

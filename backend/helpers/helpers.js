@@ -18,7 +18,7 @@ const confirmWindow = (resData, date) => {
   const diffTime = Math.abs(new Date(resData.date) - date);
   const diffDays = diffTime / (1000 * 60 * 60 * 24);
   const reservationWindowDays = 14.509;
-  return (!resData.isReserved && diffDays <= reservationWindowDays);
+  return (!resData.isReserved && diffDays <= reservationWindowDays && diffDays > 0);
 }
 
 const textUsers = (twilioClient, phoneNums, fromNum, body) => {
@@ -32,7 +32,7 @@ const textUsers = (twilioClient, phoneNums, fromNum, body) => {
       });
     })
 )
-  .then((messages) => {
+  .then(() => {
     console.log("Messages sent!");
   })
   .catch((err) => console.error(err));
