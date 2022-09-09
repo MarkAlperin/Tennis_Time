@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const puppeteer = require("puppeteer");
-const cron = require("node-cron");
 const path = require("path");
 const helpers = require("../helpers/helpers")
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
@@ -13,11 +12,11 @@ const confirmRes = async (
   courtNum,
   twilioClient,
   Reservations,
-  cronString,
   logString,
 ) => {
   const inPositionTime = performance.now();
   console.log("confirmRes() RUNNING...\n", logString);
+  const startTime = performance.now();
   puppetAttempts++;
 
   // LAUNCH PAGE ***************************************************************
@@ -100,18 +99,7 @@ const confirmRes = async (
   const day = resData.day;
   const dayModifier = currentMonth === resData.month ? 2 : 1;
 
-  // SCHEDULE CRON JOB ********************************************************
   console.log(`IN POSITION... TIME: ${Math.round(performance.now() - inPositionTime)}ms`);
-  console.log("SCHEDULING CRON JOB...\n");
-
-  // if (resData.error) {
-    const date = new Date();
-    cronString = `${date.getSeconds() + 1} ${date.getMinutes()} ${date.getHours()} ${date.getDate()} ${date.getMonth() + 1} * `;
-  // }
-
-  cron.schedule(cronString, async () => {
-    const startTime = performance.now();
-    console.log(`Inner CRON JOB RUNNING...`);
 
     // SELECT DAY ********************************************************
     await page.waitForTimeout(5000).then(() => dates[day - dayModifier].click().catch((e) => errorRetry(e)));
@@ -132,7 +120,7 @@ const confirmRes = async (
       $set: { isReserved: true },
       }).exec((err, data) => {
         if (!err) {
-          console.log("UPDATED RESERVATION isReserved: ", data);
+          console.log(`UPDATED RESERVATION ${logString} isReserved: true`);
         } else {
           console.log("ERROR UPDATING RESERVATION: ", err);
         }
@@ -147,10 +135,8 @@ const confirmRes = async (
       return false;
     });
     await browser.close();
-    console.log(`Finished running makeReservation() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms\n`);
+    console.log(`Finished running confirmRes() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms\n`);
     return true;
-
-  })
 };
 
 module.exports = confirmRes;

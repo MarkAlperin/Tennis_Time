@@ -22,7 +22,7 @@ const findAndMakeRes = async (options) => {
   const expiredReservations = reservations.filter(res => new Date(res.date) - date < 0)
   console.log("impending: ", impendingReservations)
 
-  for (const res in expiredReservations) {
+  for (const res of expiredReservations) {
     DB.reservations.findByIdAndDelete(res._id);
   }
 
@@ -38,7 +38,7 @@ const findAndMakeRes = async (options) => {
 
       let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
       resData.error = false;
-      console.log("resData: ", resData);
+
       for (let courtNum = 0; courtNum < 1; courtNum++) {
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
         console.log("RUNNING makeReservation() for: ", logString, "\n");
@@ -52,7 +52,7 @@ const findAndMakeRes = async (options) => {
             $set: { isAttempted: true },
             }).exec((err, data) => {
               if (!err) {
-                console.log("UPDATED RESERVATION isAttempted: ",JSON.stringify(data));
+                //console.log("UPDATED RESERVATION isAttempted: ", data);
               } else {
                 console.log("ERROR UPDATING RESERVATION: ", err);
               }

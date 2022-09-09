@@ -32,7 +32,7 @@ const sendFetchToServer = async (res, courtsIdx, cookieStr) => {
 
   fetch(url, options)
     .then(res => {
-      console.log(`res: ${res}\n`)
+      console.log(`res: ${JSON.stringify(res)}`)
     }).catch(err => {
       console.error("ERROR RUNNING FETCH: ", err);
     });
