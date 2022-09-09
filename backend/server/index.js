@@ -4,8 +4,8 @@ const morgan = require("morgan");
 const cors = require("cors");
 const cron = require("node-cron");
 
-const Reservations = require("../db/index.js");
-const findAndMakeReservations = require("../scripts/findAndMakeRes.js");
+const DB = require("../db/index.js");
+const findAndMakeRes = require("../scripts/findAndMakeRes.js");
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use(morgan("tiny"));
 
 app.post("/reservations", async (req, res) => {
   console.log("req.body: ", req.body);
-  Reservations.findOneAndUpdate({ date: req.body.date }, req.body, {
+  DB.reservations.findOneAndUpdate({ date: req.body.date }, req.body, {
     new: true,
     upsert: true,
   })
@@ -28,7 +28,7 @@ app.post("/reservations", async (req, res) => {
 });
 
 app.get("/reservations", (req, res) => {
-  Reservations.find({}).sort({ date: 1 })
+  DB.reservations.find({}).sort({ date: 1 })
     .then((data) => {
       res.send(data);
     })
@@ -39,7 +39,7 @@ app.get("/reservations", (req, res) => {
 });
 
 app.put("/reservations/:id", (req, res) => {
-  Reservations.findOneAndUpdate({ _id: req.params._id }, { $set: req.body })
+  DB.reservations.findOneAndUpdate({ _id: req.params._id }, { $set: req.body })
     .then(() => {
       res.sendStatus(200);
     })
@@ -49,7 +49,7 @@ app.put("/reservations/:id", (req, res) => {
 });
 
 app.delete("/reservations/:id", (req, res) => {
-  Reservations.findByIdAndDelete(req.params.id)
+  DB.reservations.findByIdAndDelete(req.params.id)
     .then(() => {
       res.sendStatus(200);
     })
@@ -64,5 +64,5 @@ console.log(`Listening at http://localhost:${process.env.PORT}`);
 
 cron.schedule("0 59 13 * * *", () => {
   console.log("RUNNING findAndMakeReservations: ",  new Date());
-  findAndMakeReservations({ runNow: false });
+  findAndMakeRes({ runNow: false });
 });
