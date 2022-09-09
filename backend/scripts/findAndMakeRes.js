@@ -35,7 +35,8 @@ const findAndMakeReservations = async (options) => {
 
         console.log("cronstring: ", cronString)
         cron.schedule(cronString, async () => {
-          scrapeCookies(resData, twilioClient, logString)
+          let cookieStr = await scrapeCookies(resData, twilioClient, logString)
+          console.log('RETURNED COOKIES: ', cookieStr)
           //sendFetchToServer(resData, courtNum);
 
           // Reservations.findByIdAndUpdate(resData._id, {
