@@ -6,6 +6,7 @@ const twilioClient = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWIL
 
 
 const confirmRes = require("./confirmRes");
+const scrapeCookies = require("./scrapeCookies")
 const Reservations = require("../db/index.js");
 const helpers = require("../helpers/helpers");
 const sendFetchToServer = require("./sendFetchToServer");
@@ -33,7 +34,8 @@ const findAndMakeReservations = async (options) => {
         console.log("RUNNING makeReservation() for: ", logString, "\n");
 
         cron.schedule(cronString, async () => {
-          sendFetchToServer(resData, courtNum);
+          scrapeCookies()
+          //sendFetchToServer(resData, courtNum);
 
           // Reservations.findByIdAndUpdate(resData._id, {
           //   $set: { isAttempted: true },
