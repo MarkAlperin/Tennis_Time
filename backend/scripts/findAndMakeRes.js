@@ -48,17 +48,17 @@ const findAndMakeRes = async (options) => {
         console.log("cronstring: ", cronString)
         cron.schedule(cronString, async () => {
 
-          //sendFetchToServer(resData, courtNum, cookieStr);
+          sendFetchToServer(resData, courtNum, cookieStr);
 
-          // Reservations.findByIdAndUpdate(resData._id, {
-          //   $set: { isAttempted: true },
-          //   }).exec((err, data) => {
-          //     if (!err) {
-          //       console.log("UPDATED RESERVATION isAttempted: ", data);
-          //     } else {
-          //       console.log("ERROR UPDATING RESERVATION: ", err);
-          //     }
-          //   });
+          DB.reservations.findByIdAndUpdate(resData._id, {
+            $set: { isAttempted: true },
+            }).exec((err, data) => {
+              if (!err) {
+                console.log("UPDATED RESERVATION isAttempted: ", data);
+              } else {
+                console.log("ERROR UPDATING RESERVATION: ", err);
+              }
+            });
 
             const phoneNums = [process.env.TWILIO_TO_NUMBER, process.env.TWILIO_DEV_NUMBER];
             const body = `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]} as been requested. Awaiting confirmation...`;
