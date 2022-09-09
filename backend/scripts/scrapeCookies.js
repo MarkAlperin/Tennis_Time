@@ -2,7 +2,7 @@
 const puppeteer = require("puppeteer");
 const path = require("path");
 const helpers = require("../helpers/helpers")
-require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 
 let puppetAttempts = 0;
