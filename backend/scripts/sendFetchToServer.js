@@ -2,7 +2,7 @@ const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 const sendFetchToServer = async (res, courtsIdx, cookieStr) => {
-  console.log("cookieStr: ", cookieStr);
+  console.log("sendFetchToServer() running...");
 
   const url = "https://sites.onlinecourtreservations.com/savereservation"
   const dateStrings = res.humanTime[0].split("/");
@@ -33,7 +33,7 @@ const sendFetchToServer = async (res, courtsIdx, cookieStr) => {
 
   fetch(url, options)
     .then(res => {
-      console.log(`res: ${JSON.stringify(res)}`)
+      console.log(`sendFetchToServer() complete...`)
     }).catch(err => {
       console.error("ERROR RUNNING FETCH: ", err);
     });

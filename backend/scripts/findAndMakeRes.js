@@ -4,12 +4,11 @@ require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const twilio = require("twilio");
 const twilioClient = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-
-const confirmRes = require("./confirmRes");
-const scrapeCookies = require("./scrapeCookies")
 const DB = require("../db/index.js");
-const helpers = require("../helpers/helpers");
+const scrapeCookies = require("./scrapeCookies")
 const sendFetchToServer = require("./sendFetchToServer");
+const confirmRes = require("./confirmRes");
+const helpers = require("../helpers/helpers");
 
 const findAndMakeRes = async (options) => {
   let cookieStr;
@@ -20,7 +19,6 @@ const findAndMakeRes = async (options) => {
   const reservations = await DB.reservations.find({}).sort({ date: -1 });
   const impendingReservations = reservations.filter(res => (!res.isReserved && (helpers.confirmWindow(res, date))))
   const expiredReservations = reservations.filter(res => new Date(res.date) - date < 0)
-  console.log("impending: ", impendingReservations)
 
 
   for (const res of expiredReservations) {
@@ -60,7 +58,7 @@ const findAndMakeRes = async (options) => {
           helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
       });
 
-        const isConfirmed = await confirmRes(resData, courtNum, twilioClient, DB.reservations, cronString, logString);
+        const isConfirmed = await confirmRes(resData, twilioClient, DB.reservations, logString);
         console.log("isConfirmed: ", isConfirmed, logString)
     }
   }

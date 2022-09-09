@@ -9,11 +9,11 @@ let puppetAttempts = 0;
 
 const confirmRes = async (
   resData,
-  courtNum,
   twilioClient,
   Reservations,
   logString,
 ) => {
+  let isConfirmed;
   const inPositionTime = performance.now();
   console.log("confirmRes() RUNNING...\n", logString);
   const startTime = performance.now();
@@ -125,18 +125,16 @@ const confirmRes = async (
           console.log("ERROR UPDATING RESERVATION: ", err);
         }
       });
+      isConfirmed = true;
     }).catch( async (e) => {
-      console.error(e);
-      console.log("ERROR: G POINTER NOT FOUND\n",  logString);
-
-      // CLOSING BROWSER ********************************************************
-      await browser.close();
+      //console.error(e);
+      console.log("ERROR: G POINTER NOT FOUND...");
       console.log(`Failed ${logString}, closing browser... Execution time:  ${Math.round(performance.now() - startTime)} ms\n`);
-      return false;
+      isConfirmed = false
     });
+
     await browser.close();
-    console.log(`Finished running confirmRes() num: ${courtNum}, Execution time:  ${Math.round(performance.now() - startTime)} ms\n`);
-    return true;
+    return isConfirmed;
 };
 
 module.exports = confirmRes;
