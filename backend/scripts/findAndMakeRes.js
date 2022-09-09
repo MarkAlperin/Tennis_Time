@@ -25,10 +25,10 @@ const findAndMakeRes = async (options) => {
 
 
 
-  // for (const res in expiredReservations) {
-  //   console.log("DELETE ", res.date)
-  //   DB.reservations.findByIdAndDelete(res._id);
-  // }
+  for (const res in expiredReservations) {
+    console.log("DELETE ", res.date)
+    DB.reservations.findByIdAndDelete(res._id);
+  }
 
   if (impendingReservations.length) {
     cookieStr = await scrapeCookies(impendingReservations[0], twilioClient)
