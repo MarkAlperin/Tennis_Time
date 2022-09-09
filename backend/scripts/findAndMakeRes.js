@@ -33,6 +33,7 @@ const findAndMakeReservations = async (options) => {
         const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
         console.log("RUNNING makeReservation() for: ", logString, "\n");
 
+        console.log("cronstring: ", cronString)
         cron.schedule(cronString, async () => {
           scrapeCookies()
           //sendFetchToServer(resData, courtNum);
