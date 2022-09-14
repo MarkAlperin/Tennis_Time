@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const bodyParser = require('body-parser')
 const cron = require("node-cron");
 
 const DB = require("../db/index.js");
@@ -11,6 +12,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json())
 app.use(morgan("tiny"));
 
 app.post("/reservations", async (req, res) => {
@@ -49,7 +51,8 @@ app.put("/reservations/:id", (req, res) => {
 });
 
 app.delete("/reservations/:id", (req, res) => {
-  console.log(req.data)
+  console.log("data", req.data)
+  console.log("body", req.body)
   // DB.reservations.findByIdAndDelete(req.params.id)
   //   .then(() => {
   //     res.sendStatus(200);
