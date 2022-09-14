@@ -50,8 +50,9 @@ app.put("/reservations/:id", (req, res) => {
 });
 
 app.delete("/reservations/:id", (req, res) => {
-  console.log("data", req.data)
-  console.log("body", req.body.data)
+  console.log(req)
+  console.log("body", req.body)
+  console.log("req.data", req.data)
   // DB.reservations.findByIdAndDelete(req.params.id)
   //   .then(() => {
   //     res.sendStatus(200);
