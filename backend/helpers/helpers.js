@@ -17,7 +17,7 @@ const makeCronString = (date, runNow) => {
 const confirmWindow = (resData, date) => {
   const diffTime = new Date(resData.date) - date;
   const diffDays = diffTime / (1000 * 60 * 60 * 24);
-  const reservationWindowDays = 14.509;
+  const reservationWindowDays = 14.52;
   return (!resData.isReserved && diffDays <= reservationWindowDays && diffTime > 0);
 }
 

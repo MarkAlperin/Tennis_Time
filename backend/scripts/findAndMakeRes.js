@@ -17,9 +17,9 @@ const findAndMakeRes = async (options) => {
   console.log("findAndMakeReservations() RUNNING...");
 
   const reservations = await DB.reservations.find({}).sort({ date: -1 });
-  const impendingReservations = reservations.filter(res => (!res.isReserved && (helpers.confirmWindow(res, date))))
+  const impendingReservations = reservations.filter(res => (!res.isReserved && helpers.confirmWindow(res, date)))
   const expiredReservations = reservations.filter(res => new Date(res.date) - date < 0)
-
+  console.log("impREs: ", impendingReservations)
 
   for (const res of expiredReservations) {
     await DB.reservations.findByIdAndDelete(res._id);
@@ -55,7 +55,7 @@ const findAndMakeRes = async (options) => {
           $set: { isAttempted: true, isReserved: isConfirmed ? true : false },
           }).exec((err, data) => {
             if (!err) {
-              console.log("UPDATED RESERVATION isAttempted: ", data);
+              console.log("UPDATED RESERVATION: ", data);
             } else {
               console.log("ERROR UPDATING RESERVATION: ", err);
             }
