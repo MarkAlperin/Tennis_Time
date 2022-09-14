@@ -49,13 +49,14 @@ app.put("/reservations/:id", (req, res) => {
 });
 
 app.delete("/reservations/:id", (req, res) => {
-  DB.reservations.findByIdAndDelete(req.params.id)
-    .then(() => {
-      res.sendStatus(200);
-    })
-    .catch((err) => {
-      res.send(err);
-    });
+  console.log(req)
+  // DB.reservations.findByIdAndDelete(req.params.id)
+  //   .then(() => {
+  //     res.sendStatus(200);
+  //   })
+  //   .catch((err) => {
+  //     res.send(err);
+  //   });
 });
 
 app.listen(process.env.PORT);

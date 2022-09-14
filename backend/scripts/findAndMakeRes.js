@@ -27,6 +27,7 @@ const findAndMakeRes = async (options) => {
 
   if (impendingReservations.length) {
     cookieStr = await scrapeCookies(impendingReservations[0], twilioClient)
+    console.log("Retrieved cookies: ", cookieStr);
   }
 
   for (let i = 0; i < impendingReservations.length; i++) {
