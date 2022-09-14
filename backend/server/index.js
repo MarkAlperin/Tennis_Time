@@ -49,7 +49,7 @@ app.put("/reservations/:id", (req, res) => {
 });
 
 app.delete("/reservations/:id", (req, res) => {
-  console.log(req)
+  console.log(req.data)
   // DB.reservations.findByIdAndDelete(req.params.id)
   //   .then(() => {
   //     res.sendStatus(200);
