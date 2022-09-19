@@ -50,16 +50,20 @@ app.put("/reservations/:id", (req, res) => {
 });
 
 app.delete("/reservations/:id", (req, res) => {
-  console.log(req)
-  console.log("body", req.body)
-  console.log("req.data", req.data)
-  // DB.reservations.findByIdAndDelete(req.params.id)
-  //   .then(() => {
-  //     res.sendStatus(200);
-  //   })
-  //   .catch((err) => {
-  //     res.send(err);
-  //   });
+  // if (!req.body.isReserved) {
+      DB.reservations.findByIdAndDelete(req.params.id)
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+  // } else {
+  //   const date = new Date();
+  //   console.log(date.getHours())
+
+  // }
+
 });
 
 app.listen(process.env.PORT);
