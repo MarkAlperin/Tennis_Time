@@ -35,7 +35,7 @@ const findAndMakeRes = async (options) => {
   }
 
   for (let i = 0; i < impendingReservations.length; i++) {
-    let resData = impendingReservations[i];
+    let resData = {...impendingReservations[i]};
     let confirmationAttempted = false;
 
     let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
@@ -45,7 +45,6 @@ const findAndMakeRes = async (options) => {
     const split = resData.courts.split(" ");
     console.log("split: ", split)
     resData.courts = split;
-
     console.log("resData.courts: ", resData.courts, typeof resData.courts)
     for (let courtNum = 0; courtNum < resData.courts.length; courtNum++) {
       const logString = `court ${resData.courts[courtNum]} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
