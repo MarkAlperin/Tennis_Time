@@ -9,7 +9,7 @@ const scrapeCookies = require("./scrapeCookies")
 const sendFetchToServer = require("./sendFetchToServer");
 const confirmRes = require("./confirmRes");
 const helpers = require("../helpers/helpers");
-const { countReset } = require("console");
+//const { countReset } = require("console");
 
 const findAndMakeRes = async (options) => {
   let cookieStr;
@@ -28,23 +28,29 @@ const findAndMakeRes = async (options) => {
 
   if (impendingReservations.length) {
     cookieStr = await scrapeCookies(impendingReservations[0], twilioClient)
+    if (!cookieStr) {
+      cookieStr = await scrapeCookies(impendingReservations[0], twilioClient)
+    }
     console.log("Retrieved cookies: ", cookieStr);
   }
 
   for (let i = 0; i < impendingReservations.length; i++) {
     const resData = impendingReservations[i];
+    let confirmationAttempted = false;
 
     let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
     resData.error = false;
 
+    resData.courts = resData.courts.split(" ");
     for (let courtNum = 0; courtNum < resData.courts.length; courtNum++) {
-      const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
+      const logString = `court ${courtNum + 1} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
       console.log("Making reservation for: ", logString, "\n");
 
       cron.schedule(cronString, async () => {
 
         sendFetchToServer(resData, courtNum, cookieStr);
 
+        if (!confirmationAttempted) {
         const phoneNums = [process.env.TWILIO_TO_NUMBER, process.env.TWILIO_DEV_NUMBER];
         let body = `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has been requested. Awaiting confirmation...`;
         helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
@@ -67,6 +73,7 @@ const findAndMakeRes = async (options) => {
                   cookieStr ? `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} could not be confirmed. Please check manually 🧐` :
                   `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} was unsuccessful... 🙁`;
           helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
+        }
       });
     }
   }
