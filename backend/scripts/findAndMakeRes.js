@@ -35,19 +35,16 @@ const findAndMakeRes = async (options) => {
   }
 
   for (let i = 0; i < impendingReservations.length; i++) {
-    let resData = {...impendingReservations[i]};
+    const resData = impendingReservations[i];
     let confirmationAttempted = false;
 
     let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
     resData.error = false;
+    resData.courtsArray = resData.courts.split(" ");
+    console.log("resData.courts: ", resData.courtsArray, typeof resData.courts)
 
-    console.log("resData.courts: ", resData, typeof resData.courts);
-    const split = resData.courts.split(" ");
-    console.log("split: ", split)
-    resData.courts = split;
-    console.log("resData.courts: ", resData.courts, typeof resData.courts)
-    for (let courtNum = 0; courtNum < resData.courts.length; courtNum++) {
-      const logString = `court ${resData.courts[courtNum]} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
+    for (let courtNum = 0; courtNum < resData.courtsArray.length; courtNum++) {
+      const logString = `court ${resData.courtsArray[courtNum]} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
       console.log("Making reservation for: ", logString, "\n");
 
       cron.schedule(cronString, async () => {
