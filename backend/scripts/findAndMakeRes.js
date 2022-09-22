@@ -52,8 +52,9 @@ const findAndMakeRes = async (options) => {
         if (courtsIdx === 0) {
         const phoneNums = [process.env.TWILIO_TO_NUMBER, process.env.TWILIO_DEV_NUMBER];
         let body = `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has been requested. Awaiting confirmation...`;
+        if (!resData.isAttempted) {
         helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
-
+        }
         console.log("RUNNING confirmRes()")
         const isConfirmed = await confirmRes(resData, twilioClient, DB.reservations, logString);
         console.log("isConfirmed: ", isConfirmed);
@@ -71,7 +72,9 @@ const findAndMakeRes = async (options) => {
           body = isConfirmed ? `Your ${resData.game} reservation has been made for ${resData.humanTime[0]} at ${resData.humanTime[1]}! 🎾🎾🎾` :
                   cookieStr ? `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} could not be confirmed. Please check manually 🧐` :
                   `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} was unsuccessful... 🙁`;
-          helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
+          if (isConfirmed || !resData.isAttempted) {
+            helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
+          }
         }
       });
     }
