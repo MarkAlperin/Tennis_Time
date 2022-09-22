@@ -9,6 +9,7 @@ const scrapeCookies = require("./scrapeCookies")
 const sendFetchToServer = require("./sendFetchToServer");
 const confirmRes = require("./confirmRes");
 const helpers = require("../helpers/helpers");
+const { countReset } = require("console");
 
 const findAndMakeRes = async (options) => {
   let cookieStr;
@@ -36,7 +37,7 @@ const findAndMakeRes = async (options) => {
     let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
     resData.error = false;
 
-    for (let courtNum = 0; courtNum < 1; courtNum++) {
+    for (let courtNum = 0; courtNum < resData.courts.length; courtNum++) {
       const logString = `${courtNum} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
       console.log("Making reservation for: ", logString, "\n");
 

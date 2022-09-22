@@ -18,7 +18,7 @@ let reservationsSchema = new mongoose.Schema({
   month: String,
   day: Number,
   facility: String,
-  courts: [String],
+  courts: String,
   game: String,
   humanTime: [String],
   isReserved: Boolean,
