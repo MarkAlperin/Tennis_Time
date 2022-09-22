@@ -20,7 +20,7 @@ const findAndMakeRes = async (options) => {
   const reservations = await DB.reservations.find({}).sort({ date: -1 });
   const impendingReservations = reservations.filter(res => (!res.isReserved && helpers.confirmWindow(res, date)))
   const expiredReservations = reservations.filter(res => new Date(res.date) - date < 0)
-  console.log("impREs: ", impendingReservations)
+  console.log("impendingReservations: ", impendingReservations)
 
   for (const res of expiredReservations) {
     await DB.reservations.findByIdAndDelete(res._id);
@@ -36,22 +36,20 @@ const findAndMakeRes = async (options) => {
 
   for (let i = 0; i < impendingReservations.length; i++) {
     const resData = impendingReservations[i];
-    let confirmationAttempted = false;
 
     let cronString = runNow ? helpers.makeCronString(date, runNow) : "0 0 14 * * *";
     resData.error = false;
     resData.courtsArray = resData.courts.split(" ");
-    console.log("resData.courts: ", resData.courtsArray, typeof resData.courts)
 
-    for (let courtNum = 0; courtNum < resData.courtsArray.length; courtNum++) {
-      const logString = `court ${resData.courtsArray[courtNum]} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
+    for (let courtsIdx = 0; courtsIdx < resData.courtsArray.length; courtsIdx++) {
+      const logString = `court ${resData.courtsArray[courtsIdx]} ${resData.game} ${resData.humanTime[0]} at ${resData.humanTime[1]}`;
       console.log("Making reservation for: ", logString, "\n");
 
       cron.schedule(cronString, async () => {
 
-        sendFetchToServer(resData, courtNum, cookieStr);
+        sendFetchToServer(resData, courtsIdx, cookieStr);
 
-        if (!confirmationAttempted) {
+        if (courtsIdx === 0) {
         const phoneNums = [process.env.TWILIO_TO_NUMBER, process.env.TWILIO_DEV_NUMBER];
         let body = `Your ${resData.game} reservation for ${resData.humanTime[0]} at ${resData.humanTime[1]} has been requested. Awaiting confirmation...`;
         helpers.textUsers(twilioClient, phoneNums, process.env.TWILIO_FROM_NUMBER, body);
